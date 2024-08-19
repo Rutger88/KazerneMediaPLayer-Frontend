@@ -17,29 +17,39 @@ export class MediaService {
       catchError(this.handleError)
     );
   }
-  
-  private handleError(error: any): Observable<never> {
-    console.error('An error occurred:', error);
-    return throwError('Something went wrong; please try again later.');
-  }
 
-  playMedia(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/play/${id}`);
+  playMedia(id: number): Observable<Media> {
+    return this.http.get<Media>(`${this.baseUrl}/play/${id}`).pipe(
+      catchError(this.handleError)
+    );
   }
 
   stopMedia(): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/stop`, {});
+    return this.http.post<void>(`${this.baseUrl}/stop`, {}).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  playNext(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/next/${id}`);
+  playNext(id: number): Observable<Media> {
+    return this.http.get<Media>(`${this.baseUrl}/next/${id}`).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  playPrevious(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/previous/${id}`);
+  playPrevious(id: number): Observable<Media> {
+    return this.http.get<Media>(`${this.baseUrl}/previous/${id}`).pipe(
+      catchError(this.handleError)
+    );
   }
 
   streamMedia(id: number): Observable<string> {
-    return this.http.get<string>(`${this.baseUrl}/stream/${id}`);
+    return this.http.get<string>(`${this.baseUrl}/stream/${id}`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  private handleError(error: any): Observable<never> {
+    console.error('An error occurred:', error);
+    return throwError('Something went wrong; please try again later.');
   }
 }

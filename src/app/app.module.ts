@@ -1,17 +1,22 @@
-/*import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { provideHttpClient, withFetch } from '@angular/common/http';
+import { AppComponent } from './app.component';
 import { PlayerComponent } from './component/player/player.component';
 
-@Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [
-    CommonModule,
-    PlayerComponent  // Import and use here
+@NgModule({
+  declarations: [
+    AppComponent,
+    PlayerComponent,
+    // other components
   ],
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  imports: [
+    BrowserModule,
+    // other modules
+  ],
+  providers: [
+    provideHttpClient(withFetch()),  // Use this modern configuration
+  ],
+  bootstrap: [AppComponent]  // Bootstrap the app through AppModule
 })
-export class AppComponent {
-  // AppComponent logic
-}*/
+export class AppModule { }

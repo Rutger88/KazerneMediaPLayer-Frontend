@@ -8,7 +8,7 @@ import { Media } from '@app/interfaces/media.interface';
   templateUrl: './player.component.html',
   styleUrls: ['./player.component.scss'],
   imports: [CommonModule],
-  standalone: true
+  standalone: true,
 })
 export class PlayerComponent {
   currentMediaUrl: string | undefined;
@@ -18,29 +18,55 @@ export class PlayerComponent {
   constructor(private mediaService: MediaService) {}
 
   playMedia(id: number) {
-    this.mediaService.playMedia(id).subscribe((media: Media) => {
-      this.isAudio = media.type === 'audio/mpeg';
-      this.mediaService.streamMedia(media.id).subscribe((url: string) => {
-        this.currentMediaUrl = url;
-      });
+    this.mediaService.playMedia(id).subscribe({
+      next: (media: Media) => {
+        this.isAudio = media.type === 'audio/mpeg';
+        this.mediaService.streamMedia(media.id).subscribe({
+          next: (url: string) => {
+            this.currentMediaUrl = url;
+          },
+          error: (err) => {
+            console.error('Error streaming media:', err);
+            this.currentMediaUrl = undefined;  // Reset if streaming fails
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error playing media:', err);
+      }
     });
   }
 
   stopMedia() {
-    this.mediaService.stopMedia().subscribe(() => {
-      this.currentMediaUrl = undefined;
+    this.mediaService.stopMedia().subscribe({
+      next: () => {
+        this.currentMediaUrl = undefined;
+      },
+      error: (err) => {
+        console.error('Error stopping media:', err);
+      }
     });
   }
 
   playNext(id: number) {
-    this.mediaService.playNext(id).subscribe((media: Media) => {
-      this.playMedia(media.id);
+    this.mediaService.playNext(id).subscribe({
+      next: (media: Media) => {
+        this.playMedia(media.id);
+      },
+      error: (err) => {
+        console.error('Error playing next media:', err);
+      }
     });
   }
 
   playPrevious(id: number) {
-    this.mediaService.playPrevious(id).subscribe((media: Media) => {
-      this.playMedia(media.id);
+    this.mediaService.playPrevious(id).subscribe({
+      next: (media: Media) => {
+        this.playMedia(media.id);
+      },
+      error: (err) => {
+        console.error('Error playing previous media:', err);
+      }
     });
   }
 }
