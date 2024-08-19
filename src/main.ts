@@ -4,7 +4,6 @@ import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideRouter, Routes } from '@angular/router';
 import { PlayerComponent } from './app/component/player/player.component';
 import { PageNotFoundComponent } from './app/page-not-found/page-not-found.component';
-import { MediaService } from '@services/media.service';
 
 const routes: Routes = [
   { path: 'home', component: PlayerComponent },
@@ -14,8 +13,8 @@ const routes: Routes = [
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideHttpClient(withFetch()),
+    provideHttpClient(withFetch()),  // This provides HttpClient throughout the app
     provideRouter(routes),
-    MediaService,
+    // Other global providers like MediaService
   ],
 }).catch(err => console.error(err));

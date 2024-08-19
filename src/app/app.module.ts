@@ -1,8 +1,9 @@
-import { NgModule } from '@angular/core';
+/*import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { PlayerComponent } from './component/player/player.component';
+
 
 @NgModule({
   declarations: [
@@ -12,6 +13,8 @@ import { PlayerComponent } from './component/player/player.component';
   ],
   imports: [
     BrowserModule,
+  
+
     // other modules
   ],
   providers: [
@@ -19,4 +22,4 @@ import { PlayerComponent } from './component/player/player.component';
   ],
   bootstrap: [AppComponent]  // Bootstrap the app through AppModule
 })
-export class AppModule { }
+export class AppModule { }*/
