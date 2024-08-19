@@ -1,32 +1,42 @@
-/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
-/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "outDir": "./dist/out-tsc",
-    "strict": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "sourceMap": true,
-    "declaration": false,
-    "experimentalDecorators": true,
-    "moduleResolution": "bundler",
-    "importHelpers": true,
-    "target": "ES2022",
-    "module": "ES2022",
+    "outDir": "./dist/out-tsc",                     // Output directory for compiled files
+    "strict": true,                                 // Enables all strict type-checking options
+    "noImplicitOverride": true,                     // Require 'override' keyword for method overrides
+    "noPropertyAccessFromIndexSignature": true,     // Disallows property access through index signatures
+    "noImplicitReturns": true,                      // Requires functions to return a value or explicitly return nothing
+    "noFallthroughCasesInSwitch": true,             // Disallows fallthrough in switch-case statements
+    "skipLibCheck": true,                           // Skips type checking of all declaration files (*.d.ts)
+    "esModuleInterop": true,                        // Enables interoperability between CommonJS and ES Modules
+    "sourceMap": true,                              // Generates corresponding '.map' files for debugging
+    "declaration": false,                           // Generates corresponding '.d.ts' files (set to true if needed)
+    "experimentalDecorators": true,                 // Enables experimental support for decorators
+    "moduleResolution": "node",                     // Module resolution strategy to use
+    "importHelpers": true,                          // Import emit helpers from 'tslib' instead of inlining them
+    "target": "ES2022",                             // Specifies ECMAScript target version
+    "module": "ES2022",                             // Specifies module code generation (ES2022 for modern environments)
     "lib": [
-      "ES2022",
-      "dom"
-    ]
+      "ES2022",                                     // Include ECMAScript 2022 library files
+      "dom"                                         // Include DOM library files for web applications
+    ],
+    "baseUrl": "./src",                             // Base directory for resolving non-relative module names
+    "paths": {
+      "@app/*": ["app/*"],                          // Alias '@app' to 'src/app'
+      "@services/*": ["app/services/*"]             // Alias '@services' to 'src/app/services' (corrected path)
+    }
   },
+  "include": [
+    "src/**/*.ts"                                   // Include all TypeScript files in the 'src' directory
+  ],
+  "exclude": [
+    "node_modules",                                 // Exclude the 'node_modules' directory
+    "dist"                                          // Exclude the 'dist' directory
+  ],
   "angularCompilerOptions": {
-    "enableI18nLegacyMessageIdFormat": false,
-    "strictInjectionParameters": true,
-    "strictInputAccessModifiers": true,
-    "strictTemplates": true
+    "enableI18nLegacyMessageIdFormat": false,       // Disables the legacy message ID format for i18n
+    "strictInjectionParameters": true,              // Enforces strict type-checking for DI parameters
+    "strictInputAccessModifiers": true,             // Ensures input properties are type-checked based on access modifiers
+    "strictTemplates": true                         // Enables strict type-checking for Angular templates
   }
 }

@@ -1,0 +1,19 @@
+<div>
+    <button (click)="playPrevious(currentId)">Previous</button>
+    <button (click)="playMedia(currentId)">Play</button>
+    <button (click)="stopMedia()">Stop</button>
+    <button (click)="playNext(currentId)">Next</button>
+  </div>
+  
+  <!-- Video Player -->
+  <video *ngIf="currentMediaUrl && !isAudio" controls>
+    <source [src]="currentMediaUrl" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+  
+  <!-- Audio Player -->
+  <audio *ngIf="currentMediaUrl && isAudio" controls>
+    <source [src]="currentMediaUrl" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+  
