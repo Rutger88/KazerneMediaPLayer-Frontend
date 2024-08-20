@@ -3,6 +3,7 @@ import { MediaService } from '@services/media.service';
 import { CommonModule } from '@angular/common';
 import { Media } from '@app/interfaces/media.interface';
 
+
 @Component({
   selector: 'app-player',
   templateUrl: './player.component.html',

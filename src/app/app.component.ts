@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { PlayerComponent } from './component/player/player.component';
 import { CommonModule } from '@angular/common';
+
 import { MediaService } from './services/media.service'; // Ensure the correct path
+
 
 @Component({
   selector: 'app-root',
@@ -11,6 +13,8 @@ import { MediaService } from './services/media.service'; // Ensure the correct p
     RouterOutlet,
     PlayerComponent,
     CommonModule,
+  
+   
   ],
   providers: [
     MediaService,  // Provide the service here
