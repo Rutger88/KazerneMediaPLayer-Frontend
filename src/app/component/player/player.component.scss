@@ -1,66 +1,61 @@
-/* player.component.scss */
+.media-player-container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
 
-/* Container for the player controls */
-.player-controls {
-    display: flex;
-    justify-content: center;
-    margin: 20px 0;
-  
-    button {
-      background-color: #007bff;
-      border: none;
-      color: white;
-      padding: 10px 20px;
-      margin: 0 10px;
-      font-size: 16px;
-      cursor: pointer;
-      border-radius: 5px;
-      transition: background-color 0.3s ease;
-  
-      &:hover {
-        background-color: #0056b3;
-      }
-  
-      &:active {
-        background-color: #003f7f;
-      }
-  
-      &:disabled {
-        background-color: #cccccc;
-        cursor: not-allowed;
-      }
-    }
-  }
-  
-  /* Video Player */
-  video {
-    width: 100%;
-    max-width: 600px;
-    border: 2px solid #007bff;
-    border-radius: 10px;
-    margin-top: 20px;
-  }
-  
-  /* Audio Player */
-  audio {
-    width: 100%;
-    max-width: 600px;
-    margin-top: 20px;
-  }
-  
-  /* Hide audio player if not in use */
-  audio[hidden] {
-    display: none;
-  }
-  
-  /* Example of custom styles for the audio player */
-  audio::-webkit-media-controls-panel {
-    background-color: #f8f9fa;
-    border-radius: 5px;
-  }
-  
-  audio::-webkit-media-controls-play-button,
-  audio::-webkit-media-controls-volume-slider {
-    filter: hue-rotate(210deg);
-  }
-  
+.media-controls {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 15px;
+}
+
+.media-button {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.media-button:hover {
+  background-color: #0056b3;
+}
+
+.media-content {
+  margin-bottom: 15px;
+}
+
+.media-video, .media-audio {
+  width: 100%;
+  max-width: 100%;
+  border-radius: 5px;
+}
+
+.media-progress {
+  height: 10px;
+  background-color: #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: 15px;
+}
+
+.media-progress::before {
+  content: '';
+  display: block;
+  height: 100%;
+  width: 0;
+  background-color: #007bff;
+  transition: width 0.3s ease;
+}
