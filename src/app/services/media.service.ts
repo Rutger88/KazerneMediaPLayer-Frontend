@@ -43,8 +43,8 @@ export class MediaService {
     );
   }
 
-  streamMedia(id: number): Observable<string> {
-    return this.http.get<string>(`${this.baseUrl}/stream/${id}`).pipe(
+  streamMedia(id: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/stream/${id}`, { responseType: 'blob' }).pipe(
       catchError(this.handleError)
     );
   }

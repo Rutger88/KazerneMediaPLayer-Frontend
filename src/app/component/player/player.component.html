@@ -1,34 +1,25 @@
 <div class="media-player-container">
   <div class="media-controls">
-    <button class="media-button" (click)="playPrevious(currentId)">
+    <button (click)="playPrevious(currentId)" class="media-button">
       <i class="fas fa-backward"></i> Previous
     </button>
-    <button class="media-button" (click)="playMedia(currentId)">
+    <button (click)="playMedia(currentId)" class="media-button">
       <i class="fas fa-play"></i> Play
     </button>
-    <button class="media-button" (click)="stopMedia()">
+    <button (click)="stopMedia()" class="media-button">
       <i class="fas fa-stop"></i> Stop
     </button>
-    <button class="media-button" (click)="playNext(currentId)">
+    <button (click)="playNext(currentId)" class="media-button">
       <i class="fas fa-forward"></i> Next
     </button>
   </div>
-  
-  <!-- Video Player -->
+
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
   <div class="media-content">
-    <video *ngIf="currentMediaUrl && !isAudio" controls class="media-video">
-      <source [src]="currentMediaUrl" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-  
-    <!-- Audio Player -->
-    <audio *ngIf="currentMediaUrl && isAudio" controls class="media-audio">
-      <source [src]="currentMediaUrl" type="audio/mpeg">
-      Your browser does not support the audio element.
-    </audio>
+    <audio *ngIf="isAudio && currentMediaUrl" controls [src]="currentMediaUrl"></audio>
+    <video *ngIf="!isAudio && currentMediaUrl" controls [src]="currentMediaUrl"></video>
   </div>
   
-  <div class="media-progress">
-    <!-- Placeholder for future progress bar implementation -->
-  </div>
+  <div class="media-progress"></div>
 </div>
