@@ -1,4 +1,18 @@
 <div class="media-player-container">
+  <div class="media-visuals">
+    <!-- Visuals like album art, video, etc., go here -->
+    <img src="assets/images/sample-album-art.jpg" alt="Album Art" class="visual-image">
+  </div>
+
+  <div *ngIf="errorMessage" class="error">
+    {{ errorMessage }}
+  </div>
+
+  <div class="media-content">
+    <audio *ngIf="isAudio && currentMediaUrl" controls [src]="currentMediaUrl"></audio>
+    <video *ngIf="!isAudio && currentMediaUrl" class="media-video" controls [src]="currentMediaUrl"></video>
+  </div>
+
   <div class="media-controls">
     <button (click)="playPrevious(currentId)" class="media-button">
       <i class="fas fa-backward"></i> Previous
@@ -14,14 +28,27 @@
     </button>
   </div>
 
-  <div *ngIf="errorMessage" class="error">
-    {{ errorMessage }}
+  <div class="media-progress"></div>
+</div>
+
+<div class="media-player-container">
+  <div class="media-visuals">
+    <!-- Visuals like album art, video, etc., go here -->
+    <img src="assets/images/sample-album-art.jpg" alt="Album Art" class="visual-image">
   </div>
 
   <div class="media-content">
-    <audio *ngIf="isAudio && currentMediaUrl" controls [src]="currentMediaUrl"></audio>
-    <video *ngIf="!isAudio && currentMediaUrl" controls [src]="currentMediaUrl"></video>
+    <!-- Video/Audio player goes here -->
+    <video class="media-video" controls>
+      <source src="assets/media/sample-video.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
   </div>
-  
-  <div class="media-progress"></div>
+
+  <div class="media-controls">
+    <!-- Media control buttons go here -->
+    <button class="media-button">Play</button>
+    <button class="media-button">Pause</button>
+    <button class="media-button">Stop</button>
+  </div>
 </div>
