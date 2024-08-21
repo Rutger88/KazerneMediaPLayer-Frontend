@@ -3,9 +3,9 @@
   margin: 20px auto;
   padding: 20px;
   background-color: rgba(0, 0, 0, 0.7);
-  background-image: url('assets/images/Naamloos.jpg'), url('assets/images/Naamloos2.jpg'), url('assets/images/Naamloos3.jpg');
-  background-size: contain;
-  background-position: left, center, right;
+  background-image: url('assets/images/Naamloos.jpg'), url('assets/images/Naamloos3.jpg');
+  background-size: contain, contain; /* Ensure both images are properly sized */
+  background-position: left top, right top; /* First image on the left, second image on the right */
   background-repeat: no-repeat;
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
