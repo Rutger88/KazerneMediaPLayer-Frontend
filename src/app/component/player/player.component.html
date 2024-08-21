@@ -14,7 +14,9 @@
     </button>
   </div>
 
-  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  <div *ngIf="errorMessage" class="error">
+    {{ errorMessage }}
+  </div>
 
   <div class="media-content">
     <audio *ngIf="isAudio && currentMediaUrl" controls [src]="currentMediaUrl"></audio>
