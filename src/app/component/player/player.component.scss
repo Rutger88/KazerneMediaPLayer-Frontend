@@ -3,33 +3,34 @@
   margin: 20px auto;
   padding: 20px;
   background-color: rgba(0, 0, 0, 0.7);
-  background-image: url('assets/images/Naamloos.jpg'), url('assets/images/Naamloos3.jpg');
-  background-size: contain, contain; /* Ensure both images are properly sized */
-  background-position: left top, right top; /* First image on the left, second image on the right */
-  background-repeat: no-repeat;
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   text-align: center;
   color: white;
   border: 2px solid #007bff;
-  position: relative; /* Ensures absolute positioning works within this container */
+  position: relative;
+}
+
+.media-content {
+  margin-bottom: 15px;
 }
 
 .media-visuals {
   margin-bottom: 20px;
   padding: 10px;
-  background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
+  background-color: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  max-width: 100%; /* Ensures the visuals are responsive */
-  text-align: center; /* Centers the image inside */
+  max-width: 100%;
+  text-align: center;
 }
 
-.visual-image {
+.media-video {
   width: 100%;
   max-width: 100%;
   border-radius: 8px;
   object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .media-controls {
@@ -64,18 +65,6 @@
   transform: translateY(-2px);
 }
 
-.media-content {
-  margin-bottom: 15px;
-}
-
-.media-video, .media-audio {
-  width: 100%;
-  max-width: 100%;
-  border-radius: 5px;
-  border: 2px solid #007bff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
 .media-progress {
   height: 12px;
   background-color: #ddd;
@@ -92,4 +81,9 @@
   width: 0;
   background-color: #007bff;
   transition: width 0.3s ease;
+}
+
+.error {
+  color: red;
+  margin-bottom: 15px;
 }

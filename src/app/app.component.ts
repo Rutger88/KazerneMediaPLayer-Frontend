@@ -22,14 +22,20 @@ import { MediaService } from './services/media.service'; // Ensure the correct p
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
-  constructor(private mediaService: MediaService) {}
 
-  ngOnInit() {
-    this.mediaService.getMediaData().subscribe({
-      next: (data) => console.log(data),
-      error: (err) => console.error('Error fetching media data:', err),
-      complete: () => console.log('Media data fetching complete')
-    });
+  export class AppComponent implements OnInit {
+    mediaData: any;
+  
+    constructor(private mediaService: MediaService) {}
+  
+    ngOnInit() {
+      this.mediaService.getMediaData().subscribe({
+        next: (data) => {
+          this.mediaData = data;
+          console.log(data);
+        },
+        error: (err) => console.error('Error fetching media data:', err),
+        complete: () => console.log('Media data fetching complete')
+      });
+    }
   }
-}

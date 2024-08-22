@@ -1,4 +1,11 @@
-import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import {
+  Component,
+  Inject,
+  PLATFORM_ID,
+  ViewChild,
+  ElementRef,
+  AfterViewInit
+} from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MediaService } from '@services/media.service';
 import { CommonModule } from '@angular/common';
@@ -11,7 +18,10 @@ import { Media } from '@app/interfaces/media.interface';
   imports: [CommonModule],
   standalone: true,
 })
-export class PlayerComponent {
+export class PlayerComponent implements AfterViewInit {
+  @ViewChild('audioElement') audioElement!: ElementRef<HTMLAudioElement>;
+  @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
+
   currentMediaUrl: string | undefined;
   isAudio: boolean = false;
   currentId: number = 1;
@@ -22,9 +32,9 @@ export class PlayerComponent {
     @Inject(PLATFORM_ID) private platformId: object
   ) {}
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      this.playMedia(this.currentId);
+      // Any additional setup for the player can go here
     }
   }
 
@@ -43,6 +53,11 @@ export class PlayerComponent {
             }
             this.currentMediaUrl = window.URL.createObjectURL(blob);
             this.errorMessage = undefined;
+            if (this.isAudio) {
+              this.audioElement.nativeElement.play();
+            } else {
+              this.videoElement.nativeElement.play();
+            }
           },
           error: (err) => {
             console.error('Error streaming media:', err);
@@ -69,6 +84,11 @@ export class PlayerComponent {
           window.URL.revokeObjectURL(this.currentMediaUrl);
         }
         this.currentMediaUrl = undefined;
+        if (this.isAudio) {
+          this.audioElement.nativeElement.pause();
+        } else {
+          this.videoElement.nativeElement.pause();
+        }
       },
       error: (err) => {
         console.error('Error stopping media:', err);
@@ -84,7 +104,11 @@ export class PlayerComponent {
 
     this.mediaService.playNext(id).subscribe({
       next: (media: Media) => {
-        this.playMedia(media.id);
+        if (media) {
+          this.playMedia(media.id);
+        } else {
+          this.errorMessage = 'No more media available.';
+        }
       },
       error: (err) => {
         console.error('Error playing next media:', err);
