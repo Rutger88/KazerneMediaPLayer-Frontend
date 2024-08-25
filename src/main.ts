@@ -2,12 +2,12 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from '@app/app.component';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideRouter, Routes } from '@angular/router';
-import { PlayerComponent } from '@app/component/player/player.component';
+import { ParentComponent } from '@app/component/player/parent.component';
 import { PageNotFoundComponent } from '@app/page-not-found/page-not-found.component';
 
 
 const routes: Routes = [
-  { path: 'home', component: PlayerComponent },
+  { path: 'home', component: ParentComponent },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', component: PageNotFoundComponent }
 ];

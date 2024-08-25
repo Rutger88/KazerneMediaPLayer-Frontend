@@ -1,27 +1,26 @@
 <div class="media-player-container">
-    <div *ngIf="errorMessage" class="error">
-      {{ errorMessage }}
-    </div>
-  
-    <div class="media-content">
-      <video *ngIf="currentMovieUrl" #videoElement class="media-video" controls [src]="currentMovieUrl"></video>
-    </div>
-  
-    <div class="media-controls">
-      <button (click)="playPreviousMovie(currentMovieId)" class="media-button">
-        <i class="fas fa-backward"></i> Previous
-      </button>
-      <button (click)="playMovie(currentMovieId)" class="media-button">
-        <i class="fas fa-play"></i> Play
-      </button>
-      <button (click)="stopMovie()" class="media-button">
-        <i class="fas fa-stop"></i> Stop
-      </button>
-      <button (click)="playNextMovie(currentMovieId)" class="media-button">
-        <i class="fas fa-forward"></i> Next
-      </button>
-    </div>
-  
-    <div class="media-progress"></div>
+  <div *ngIf="errorMessage" class="error">
+    {{ errorMessage }}
   </div>
-  
+
+  <div class="media-content">
+    <video *ngIf="currentMovieUrl" #videoElement class="media-video" controls [src]="currentMovieUrl"></video>
+  </div>
+
+  <div class="media-controls">
+    <button *ngIf="currentMovieId !== undefined" (click)="playPreviousMovie()" class="media-button">
+      <i class="fas fa-backward"></i> Previous
+    </button>
+    <button *ngIf="currentMovieId !== undefined" (click)="playMovie(currentMovieId)" class="media-button">
+      <i class="fas fa-play"></i> Play
+    </button>
+    <button (click)="stopMovie()" class="media-button">
+      <i class="fas fa-stop"></i> Stop
+    </button>
+    <button *ngIf="currentMovieId !== undefined" (click)="playNextMovie()" class="media-button">
+      <i class="fas fa-forward"></i> Next
+    </button>
+  </div>
+
+  <div class="media-progress"></div>
+</div>

@@ -1,8 +1,4 @@
 <div class="media-player-container">
-  <div class="media-visuals">
-    <!-- Visuals like video, etc., go here -->
-  </div>
-
   <div *ngIf="errorMessage" class="error">
     {{ errorMessage }}
   </div>
@@ -28,25 +24,4 @@
   </div>
 
   <div class="media-progress"></div>
-</div>
-
-<div class="media-player-container">
-  <div class="media-visuals">
-    <!-- Visuals like video, etc., go here -->
-  </div>
-
-  <div class="media-content">
-    <!-- Video/Audio player goes here -->
-    <video class="media-video" controls>
-      <source src="assets/movies/GX1000- Best of Sean Greene's Hill Bombs.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-  </div>
-
-  <div class="media-controls">
-    <!-- Media control buttons go here -->
-    <button class="media-button">Play</button>
-    <button class="media-button">Pause</button>
-    <button class="media-button">Stop</button>
-  </div>
 </div>

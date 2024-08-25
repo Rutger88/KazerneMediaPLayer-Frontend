@@ -1,0 +1,7 @@
+<div class="media-and-movie-container">
+  <button (click)="showPlayer()">Show Player</button>
+  <button (click)="showMoviePlayer()">Show Movie Player</button>
+  
+  <app-player *ngIf="!isMoviePlayerVisible"></app-player>
+  <app-movie-player *ngIf="isMoviePlayerVisible"></app-movie-player>
+</div>

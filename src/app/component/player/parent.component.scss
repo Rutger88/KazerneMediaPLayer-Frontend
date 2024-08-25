@@ -1,0 +1,66 @@
+/* Parent container that holds both the media and movie players */
+.media-and-movie-player-container {
+    display: flex;
+    flex-direction: column; /* Stack players vertically */
+    gap: 20px; /* Space between the players */
+    padding: 20px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+  }
+  
+  /* Styles for each player container */
+  .media-player-container,
+  .movie-player-container {
+    background-color: #ffffff;
+    padding: 15px;
+    border: 1px solid #cccccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Styles for error messages */
+  .error {
+    color: #ff0000;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  /* Media and movie content styling */
+  .media-content {
+    margin-bottom: 15px;
+  }
+  
+  /* Media controls styling */
+  .media-controls {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  /* Individual buttons styling */
+  .media-button {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .media-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .media-button i {
+    margin-right: 5px;
+  }
+  
+  /* Progress bar (if implemented later) */
+  .media-progress {
+    height: 5px;
+    background-color: #007bff;
+    border-radius: 5px;
+    margin-top: 10px;
+    transition: width 0.3s;
+  }
+  

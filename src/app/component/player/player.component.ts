@@ -1,11 +1,4 @@
-import {
-  Component,
-  Inject,
-  PLATFORM_ID,
-  ViewChild,
-  ElementRef,
-  AfterViewInit
-} from '@angular/core';
+import { Component, Inject, PLATFORM_ID, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MediaService } from '@services/media.service';
 import { CommonModule } from '@angular/common';
@@ -15,7 +8,7 @@ import { Media } from '@app/interfaces/media.interface';
   selector: 'app-player',
   templateUrl: './player.component.html',
   styleUrls: ['./player.component.scss'],
-  imports: [CommonModule],
+  imports: [CommonModule], // Ensure CommonModule is included here
   standalone: true,
 })
 export class PlayerComponent implements AfterViewInit {
