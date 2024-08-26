@@ -1,7 +1,6 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MovieService } from '@services/movie.service';
-import { Media } from '@app/interfaces/media.interface';
 
 @Component({
   selector: 'app-movie-player',
@@ -14,70 +13,75 @@ export class MoviePlayerComponent implements OnInit {
   @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
 
   currentMovieId?: number;
-  currentMovieUrl?: string;
   errorMessage?: string;
+  videoBlobUrl?: string;
 
   constructor(private movieService: MovieService) {}
 
   ngOnInit() {
-    this.movieService.getCurrentlyPlayingMovie().subscribe({
-      next: (media: Media) => {
-        this.currentMovieId = media.id;
-        this.currentMovieUrl = media.url;
-      },
-      error: (err) => {
-        console.error('Error fetching currently playing movie:', err);
-        this.errorMessage = `Error fetching currently playing movie: ${err.message || 'Unknown error'}`;
-      },
-    });
+    // Optionally load a movie initially without playing it.
   }
 
   playMovie(id: number) {
-    this.movieService.playMovie(id).subscribe({
-      next: (media: Media) => {
-        this.currentMovieUrl = media.url;
-        this.errorMessage = undefined;
-        this.playVideo();
-      },
-      error: (err) => {
-        console.error('Error playing movie:', err);
-        this.errorMessage = `Failed to play movie. ${err.message || 'Unknown error'}`;
-      },
-    });
+    if (this.videoBlobUrl) {
+      // Play the loaded movie
+      this.videoElement.nativeElement.play();
+    } else {
+      // Load and then play the movie
+      this.loadMovie(id, true);
+    }
   }
 
   stopMovie() {
-    this.currentMovieUrl = undefined;
     if (this.videoElement?.nativeElement) {
       this.videoElement.nativeElement.pause();
       this.videoElement.nativeElement.currentTime = 0; // Optionally reset to start
+      this.videoElement.nativeElement.src = ''; // Clear the source
+      this.videoBlobUrl = undefined; // Clear the stored blob URL
     }
   }
 
   playPreviousMovie() {
     if (this.currentMovieId !== undefined) {
-      this.playMovie(this.currentMovieId - 1);
+      this.loadMovie(this.currentMovieId - 1, false);
     } else {
-      console.error('No previous movie available');
       this.errorMessage = 'No previous movie available.';
     }
   }
 
   playNextMovie() {
     if (this.currentMovieId !== undefined) {
-      this.playMovie(this.currentMovieId + 1);
+      this.loadMovie(this.currentMovieId + 1, false);
     } else {
-      console.error('No next movie available');
       this.errorMessage = 'No next movie available.';
     }
   }
 
-  private playVideo() {
+  private loadMovie(id: number, autoPlay: boolean) {
+    this.movieService.streamMovie(id).subscribe({
+      next: (blob: Blob) => {
+        this.currentMovieId = id;
+        this.setVideoSource(blob, autoPlay);
+        this.errorMessage = undefined;
+      },
+      error: (err) => {
+        console.error('Error streaming movie:', err);
+        this.errorMessage = `Failed to stream movie. ${err.message || 'Unknown error'}`;
+      },
+    });
+  }
+
+  private setVideoSource(blob: Blob, autoPlay: boolean) {
+    this.videoBlobUrl = URL.createObjectURL(blob);
     if (this.videoElement?.nativeElement) {
-      this.videoElement.nativeElement.play();
+      this.videoElement.nativeElement.src = this.videoBlobUrl;
+      this.videoElement.nativeElement.load();
+      if (autoPlay) {
+        this.videoElement.nativeElement.play();
+      }
     } else {
-      console.error('Video element not found');
-      this.errorMessage = 'Failed to play movie. Video element not available.';
+      this.errorMessage = 'Failed to set movie source. Video element not available.';
+      console.error(this.errorMessage);
     }
   }
 }

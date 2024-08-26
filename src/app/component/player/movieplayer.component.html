@@ -1,26 +1,38 @@
 <div class="media-player-container">
+  <!-- Display error message if it exists -->
   <div *ngIf="errorMessage" class="error">
     {{ errorMessage }}
   </div>
 
+  <!-- Media content area: video player -->
   <div class="media-content">
-    <video *ngIf="currentMovieUrl" #videoElement class="media-video" controls [src]="currentMovieUrl"></video>
+    <!-- Video player element -->
+    <video #videoElement class="media-video" controls></video>
   </div>
 
+  <!-- Media controls with conditional buttons -->
   <div class="media-controls">
+    <!-- Previous button is shown only if currentMovieId is defined -->
     <button *ngIf="currentMovieId !== undefined" (click)="playPreviousMovie()" class="media-button">
       <i class="fas fa-backward"></i> Previous
     </button>
-    <button *ngIf="currentMovieId !== undefined" (click)="playMovie(currentMovieId)" class="media-button">
+
+    <!-- Play button is shown only if currentMovieId is defined -->
+    <button *ngIf="currentMovieId !== undefined" (click)="playMovie(currentMovieId!)" class="media-button">
       <i class="fas fa-play"></i> Play
     </button>
+
+    <!-- Stop button -->
     <button (click)="stopMovie()" class="media-button">
       <i class="fas fa-stop"></i> Stop
     </button>
+
+    <!-- Next button is shown only if currentMovieId is defined -->
     <button *ngIf="currentMovieId !== undefined" (click)="playNextMovie()" class="media-button">
       <i class="fas fa-forward"></i> Next
     </button>
   </div>
 
+  <!-- Placeholder for media progress, if needed -->
   <div class="media-progress"></div>
 </div>
