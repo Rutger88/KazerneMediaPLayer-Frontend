@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, Router } from '@angular/router';  // Import Router
 import { CommonModule } from '@angular/common';
 import { MediaService } from './services/media.service';
 import { ParentComponent } from './component/player/parent.component';
@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
   isRegisterModalOpen = false; // Added properties
   mediaData: any;
 
-  constructor(private mediaService: MediaService) {}
+  constructor(private mediaService: MediaService, private router: Router) {}  // Inject Router
 
   ngOnInit() {
     this.mediaService.getMediaData().subscribe({
@@ -53,8 +53,10 @@ export class AppComponent implements OnInit {
   closeModal(modalType: string) {
     if (modalType === 'loginModal') {
       this.isLoginModalOpen = false;
+      this.router.navigate(['/home']);  // Redirect to /home after login
     } else if (modalType === 'registerModal') {
       this.isRegisterModalOpen = false;
+      this.router.navigate(['/home']);  // Redirect to /home after registration
     }
   }
 }

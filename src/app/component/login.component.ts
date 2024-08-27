@@ -28,7 +28,8 @@ export class LoginComponent {
     this.http.post<any>('http://localhost:8080/user/login', { username: this.username, password: this.password }).subscribe({
       next: (response) => {
         localStorage.setItem('authToken', response.token);
-        this.router.navigate(['/media-player']);
+        this.close(); // Close the modal after login
+        this.router.navigate(['/home']); // Redirect to media player
       },
       error: () => {
         this.errorMessage = 'Invalid username or password';

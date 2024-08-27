@@ -6,12 +6,14 @@ import { ParentComponent } from '@app/component/player/parent.component';
 import { PageNotFoundComponent } from '@app/page-not-found/page-not-found.component';
 import { LoginComponent } from '@app/component/login.component';
 import { RegistrationComponent } from '@app/component/register.component';
+import { PlayerComponent } from '@app/component/player/player.component';  // Ensure this exists
 
 const routes: Routes = [
   { path: 'home', component: ParentComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegistrationComponent },
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: 'media-player', component: PlayerComponent },  // Route to media player
+  { path: '', redirectTo: '/media-player', pathMatch: 'full' },  // Redirect to media-player by default
   { path: '**', component: PageNotFoundComponent }
 ];
 

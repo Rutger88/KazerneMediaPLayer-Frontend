@@ -4,7 +4,6 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Media } from '@app/interfaces/media.interface';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -12,6 +11,15 @@ export class MediaService {
   private baseUrl = 'http://localhost:8080/media'; 
 
   constructor(private http: HttpClient) {}
+
+  // Existing methods...
+
+  // New method to get the media list
+  getMediaList(): Observable<Media[]> {
+    return this.http.get<Media[]>(`${this.baseUrl}/list`).pipe(
+      catchError(this.handleError)
+    );
+  }
 
   getMediaData(): Observable<Media[]> {
     return this.http.get<Media[]>(`${this.baseUrl}`).pipe(

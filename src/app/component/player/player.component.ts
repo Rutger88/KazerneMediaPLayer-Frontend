@@ -3,6 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { MediaService } from '@services/media.service';
 import { CommonModule } from '@angular/common';
 import { Media } from '@app/interfaces/media.interface';
+import { HttpClient } from '@angular/common/http'; // Import HttpClientModule
 
 @Component({
   selector: 'app-player',
@@ -22,6 +23,7 @@ export class PlayerComponent implements AfterViewInit {
 
   constructor(
     private mediaService: MediaService,
+    private http: HttpClient, // Inject HttpClient
     @Inject(PLATFORM_ID) private platformId: object
   ) {}
 
@@ -119,6 +121,32 @@ export class PlayerComponent implements AfterViewInit {
         console.error('Error playing previous media:', err);
         this.errorMessage = 'Failed to play previous media. Please try again later.';
       }
+    });
+  }
+
+  uploadMedia(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const formData = new FormData();
+      formData.append('file', input.files[0]);
+
+      this.http.post('http://localhost:8080/media/upload', formData).subscribe({
+        next: () => {
+          // Handle successful upload, like refreshing the media list
+          this.loadMedia();  // Implement loadMedia method to refresh the media list
+        },
+        error: (err) => console.error('Error uploading media:', err),
+      });
+    }
+  }
+
+  // This method is to refresh the media list after an upload
+  private loadMedia() {
+    this.mediaService.getMediaList().subscribe({
+      next: (mediaList) => {
+        // Update your media list here
+      },
+      error: (err) => console.error('Error loading media list:', err),
     });
   }
 }
