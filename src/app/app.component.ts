@@ -3,22 +3,28 @@ import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MediaService } from './services/media.service';
 import { ParentComponent } from './component/player/parent.component';
+import { LoginComponent } from './component/login.component';
+import { RegistrationComponent } from './component/register.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
-    RouterOutlet,         // Angular router outlet
-    CommonModule,         // Common Angular directives
-    ParentComponent       // ParentComponent should be imported here
+    RouterOutlet,
+    CommonModule,
+    ParentComponent,
+    LoginComponent,
+    RegistrationComponent,
   ],
   providers: [
-    MediaService,         // Provide the MediaService
+    MediaService,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+  isLoginModalOpen = false; // Added properties
+  isRegisterModalOpen = false; // Added properties
   mediaData: any;
 
   constructor(private mediaService: MediaService) {}
@@ -32,5 +38,23 @@ export class AppComponent implements OnInit {
       error: (err) => console.error('Error fetching media data:', err),
       complete: () => console.log('Media data fetching complete')
     });
+  }
+
+  // Added the openModal method
+  openModal(modalType: string) {
+    if (modalType === 'loginModal') {
+      this.isLoginModalOpen = true;
+    } else if (modalType === 'registerModal') {
+      this.isRegisterModalOpen = true;
+    }
+  }
+
+  // Added the closeModal method
+  closeModal(modalType: string) {
+    if (modalType === 'loginModal') {
+      this.isLoginModalOpen = false;
+    } else if (modalType === 'registerModal') {
+      this.isRegisterModalOpen = false;
+    }
   }
 }

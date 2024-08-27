@@ -8,7 +8,7 @@ import { Media } from '@app/interfaces/media.interface';
   selector: 'app-player',
   templateUrl: './player.component.html',
   styleUrls: ['./player.component.scss'],
-  imports: [CommonModule], // Ensure CommonModule is included here
+  imports: [CommonModule],
   standalone: true,
 })
 export class PlayerComponent implements AfterViewInit {
@@ -47,8 +47,10 @@ export class PlayerComponent implements AfterViewInit {
             this.currentMediaUrl = window.URL.createObjectURL(blob);
             this.errorMessage = undefined;
             if (this.isAudio) {
+              this.audioElement.nativeElement.src = this.currentMediaUrl;
               this.audioElement.nativeElement.play();
             } else {
+              this.videoElement.nativeElement.src = this.currentMediaUrl;
               this.videoElement.nativeElement.play();
             }
           },
@@ -71,23 +73,17 @@ export class PlayerComponent implements AfterViewInit {
       return;
     }
 
-    this.mediaService.stopMedia().subscribe({
-      next: () => {
-        if (this.currentMediaUrl) {
-          window.URL.revokeObjectURL(this.currentMediaUrl);
-        }
-        this.currentMediaUrl = undefined;
-        if (this.isAudio) {
-          this.audioElement.nativeElement.pause();
-        } else {
-          this.videoElement.nativeElement.pause();
-        }
-      },
-      error: (err) => {
-        console.error('Error stopping media:', err);
-        this.errorMessage = 'Failed to stop media. Please try again later.';
-      }
-    });
+    if (this.isAudio) {
+      this.audioElement.nativeElement.pause();
+      this.audioElement.nativeElement.currentTime = 0;
+    } else {
+      this.videoElement.nativeElement.pause();
+      this.videoElement.nativeElement.currentTime = 0;
+    }
+    if (this.currentMediaUrl) {
+      window.URL.revokeObjectURL(this.currentMediaUrl);
+    }
+    this.currentMediaUrl = undefined;
   }
 
   playNext(id: number) {

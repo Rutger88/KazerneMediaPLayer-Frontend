@@ -1,0 +1,76 @@
+.registration-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .registration-container label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .registration-container input[type="text"],
+  .registration-container input[type="password"],
+  .registration-container input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .registration-container input[type="text"]:focus,
+  .registration-container input[type="password"]:focus,
+  .registration-container input[type="email"]:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  .registration-container button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .registration-container button[type="submit"]:hover {
+    background-color: #218838;
+  }
+  
+  .error-message {
+    color: #e74c3c;
+    margin-top: 10px;
+    font-size: 14px;
+    text-align: center;
+  }
+  
+  @media (max-width: 480px) {
+    .registration-container {
+      padding: 15px;
+    }
+  
+    .registration-container input[type="text"],
+    .registration-container input[type="password"],
+    .registration-container input[type="email"] {
+      font-size: 14px;
+    }
+  
+    .registration-container button[type="submit"] {
+      font-size: 14px;
+    }
+  }
+  

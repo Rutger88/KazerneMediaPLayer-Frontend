@@ -1,0 +1,20 @@
+nav {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    background-color: #f8f9fa; /* Light background for navigation */
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  nav a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 10px;
+  }
+  
+  nav a:hover {
+    text-decoration: underline;
+  }
+  

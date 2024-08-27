@@ -1,4 +1,12 @@
-<div>
-    <!-- Router outlet for navigating between routes -->
-    <router-outlet></router-outlet>
-  
+<nav>
+  <a routerLink="/home" routerLinkActive="active">Home</a>
+  <a href="javascript:void(0);" (click)="openModal('loginModal')">Login</a>
+  <a href="javascript:void(0);" (click)="openModal('registerModal')">Register</a>
+</nav>
+
+<!-- Router outlet for other components -->
+<router-outlet></router-outlet>
+
+<!-- Modals for login and registration -->
+<app-login *ngIf="isLoginModalOpen" (closeModal)="closeModal('loginModal')"></app-login>
+<app-registration *ngIf="isRegisterModalOpen" (closeModal)="closeModal('registerModal')"></app-registration>

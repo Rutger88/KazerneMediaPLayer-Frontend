@@ -1,27 +1,28 @@
 <div class="media-player-container">
-  <div *ngIf="errorMessage" class="error">
+  <div *ngIf="errorMessage" class="error-message">
     {{ errorMessage }}
   </div>
 
   <div class="media-content">
-    <audio *ngIf="isAudio && currentMediaUrl" controls [src]="currentMediaUrl"></audio>
-    <video *ngIf="!isAudio && currentMediaUrl" class="media-video" controls [src]="currentMediaUrl"></video>
+    <audio #audioElement class="media-audio" *ngIf="isAudio" controls></audio>
+    <video #videoElement class="media-video" *ngIf="!isAudio" controls></video>
   </div>
 
   <div class="media-controls">
     <button (click)="playPrevious(currentId)" class="media-button">
       <i class="fas fa-backward"></i> Previous
     </button>
+
     <button (click)="playMedia(currentId)" class="media-button">
       <i class="fas fa-play"></i> Play
     </button>
+
     <button (click)="stopMedia()" class="media-button">
       <i class="fas fa-stop"></i> Stop
     </button>
+
     <button (click)="playNext(currentId)" class="media-button">
       <i class="fas fa-forward"></i> Next
     </button>
   </div>
-
-  <div class="media-progress"></div>
 </div>
