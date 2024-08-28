@@ -27,10 +27,18 @@ export class LoginComponent {
   onLogin() {
     this.http.post<any>('http://localhost:8080/user/login', { username: this.username, password: this.password }).subscribe({
       next: (response) => {
+        console.log('Login response:', response);
         localStorage.setItem('authToken', response.token);
-        localStorage.setItem('userId', response.userId); 
+        localStorage.setItem('userId', response.user.id.toString());
+        
+        // Store the library ID in localStorage
+        if (response.user.libraries && response.user.libraries.length > 0) {
+          const libraryId = response.user.libraries[0].id;
+          localStorage.setItem('libraryId', libraryId.toString());
+        }
+
         this.close(); // Close the modal after login
-        this.router.navigate(['/home']); // Redirect to media player
+        this.router.navigate(['/home']); // Redirect to home
       },
       error: () => {
         this.errorMessage = 'Invalid username or password';
