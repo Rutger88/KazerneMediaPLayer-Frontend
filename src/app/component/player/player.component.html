@@ -25,4 +25,15 @@
       <i class="fas fa-forward"></i> Next
     </button>
   </div>
+
+  <!-- Upload section -->
+  <div *ngIf="isLoggedIn" class="upload-section">
+    <label for="file-upload" class="custom-file-upload">
+      <i class="fa fa-cloud-upload"></i> Upload Music
+    </label>
+    <input id="file-upload" type="file" (change)="onFileSelected($event)" />
+  </div>
+
+  <!-- Error message display -->
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
 </div>

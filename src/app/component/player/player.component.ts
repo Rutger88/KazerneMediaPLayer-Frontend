@@ -1,9 +1,9 @@
-import { Component, Inject, PLATFORM_ID, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, Inject, PLATFORM_ID, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MediaService } from '@services/media.service';
 import { CommonModule } from '@angular/common';
 import { Media } from '@app/interfaces/media.interface';
-import { HttpClient } from '@angular/common/http'; // Import HttpClientModule
+import { HttpClient, HttpHeaders } from '@angular/common/http'; // Import HttpClient and HttpHeaders
 
 @Component({
   selector: 'app-player',
@@ -20,16 +20,19 @@ export class PlayerComponent implements AfterViewInit {
   isAudio: boolean = false;
   currentId: number = 1;
   errorMessage: string | undefined;
+  isLoggedIn: boolean = false;
 
   constructor(
     private mediaService: MediaService,
     private http: HttpClient, // Inject HttpClient
+    private cdr: ChangeDetectorRef, // Inject ChangeDetectorRef
     @Inject(PLATFORM_ID) private platformId: object
   ) {}
 
   ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      // Any additional setup for the player can go here
+      this.isLoggedIn = !!localStorage.getItem('authToken'); // Check if the user is logged in
+      this.cdr.detectChanges(); // Manually trigger change detection
     }
   }
 
@@ -124,29 +127,36 @@ export class PlayerComponent implements AfterViewInit {
     });
   }
 
-  uploadMedia(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const formData = new FormData();
-      formData.append('file', input.files[0]);
+  uploadMedia(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+    const userId = localStorage.getItem('userId'); // Assuming you store the user ID in localStorage after login
 
-      this.http.post('http://localhost:8080/media/upload', formData).subscribe({
-        next: () => {
-          // Handle successful upload, like refreshing the media list
-          this.loadMedia();  // Implement loadMedia method to refresh the media list
-        },
-        error: (err) => console.error('Error uploading media:', err),
-      });
-    }
+    // Setting the Authorization header
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${localStorage.getItem('authToken')}`);
+
+    this.http.post(`http://localhost:8080/media/upload?userId=${userId}`, formData, { headers }).subscribe({
+      next: () => {
+        console.log('File uploaded successfully');
+        // Optionally, refresh the media list after upload
+      },
+      error: (err) => {
+        console.error('Error uploading media:', err);
+        this.errorMessage = 'Failed to upload file. Please try again later.';
+      }
+    });
   }
 
-  // This method is to refresh the media list after an upload
-  private loadMedia() {
-    this.mediaService.getMediaList().subscribe({
-      next: (mediaList) => {
-        // Update your media list here
-      },
-      error: (err) => console.error('Error loading media list:', err),
-    });
+  onFileSelected(event: Event) {
+    if (!this.isLoggedIn) {
+      this.errorMessage = 'You must be logged in to upload files.';
+      return;
+    }
+
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      this.uploadMedia(file);
+    }
   }
 }
