@@ -31,12 +31,13 @@ export class LoginComponent {
         localStorage.setItem('authToken', response.token);
         localStorage.setItem('userId', response.user.id.toString());
         
-        // Store the library ID in localStorage
+        // Ensure that libraryId is retrieved from the response and stored in localStorage
         if (response.user.libraries && response.user.libraries.length > 0) {
-          const libraryId = response.user.libraries[0].id;
-          localStorage.setItem('libraryId', libraryId.toString());
+          localStorage.setItem('libraryId', response.user.libraries[0].id.toString());
+        } else {
+          console.error('No library found for the user.');
         }
-
+  
         this.close(); // Close the modal after login
         this.router.navigate(['/home']); // Redirect to home
       },

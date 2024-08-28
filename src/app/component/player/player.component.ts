@@ -130,19 +130,18 @@ export class PlayerComponent implements AfterViewInit {
   uploadMedia(file: File) {
     const formData = new FormData();
     formData.append('file', file);
-
-    const userId = localStorage.getItem('userId');
-    const libraryId = localStorage.getItem('libraryId'); // Get the library ID from localStorage
-
+  
+    const libraryId = localStorage.getItem('libraryId'); // Retrieve the libraryId from localStorage
+    console.log(`Retrieved libraryId from localStorage: ${libraryId}`);
+  
     if (!libraryId) {
       this.errorMessage = 'Library ID is missing. Cannot upload file.';
       return;
     }
-
-    // Setting the Authorization header
+  
     const headers = new HttpHeaders().set('Authorization', `Bearer ${localStorage.getItem('authToken')}`);
-
-    this.http.post(`http://localhost:8080/media/upload?userId=${userId}&libraryId=${libraryId}`, formData, { headers }).subscribe({
+  
+    this.http.post(`http://localhost:8080/media/upload?libraryId=${libraryId}`, formData, { headers }).subscribe({
       next: () => {
         console.log('File uploaded successfully');
         // Optionally, refresh the media list after upload
