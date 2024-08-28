@@ -3,7 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { MediaService } from '@services/media.service';
 import { CommonModule } from '@angular/common';
 import { Media } from '@app/interfaces/media.interface';
-import { HttpClient, HttpHeaders } from '@angular/common/http'; // Import HttpClient and HttpHeaders
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-player',
@@ -24,7 +24,7 @@ export class PlayerComponent implements AfterViewInit {
 
   constructor(
     private mediaService: MediaService,
-    private http: HttpClient, // Inject HttpClient
+    private http: HttpClient,
     private cdr: ChangeDetectorRef, // Inject ChangeDetectorRef
     @Inject(PLATFORM_ID) private platformId: object
   ) {}
@@ -130,7 +130,12 @@ export class PlayerComponent implements AfterViewInit {
   uploadMedia(file: File) {
     const formData = new FormData();
     formData.append('file', file);
-    const userId = localStorage.getItem('userId'); // Assuming you store the user ID in localStorage after login
+    const userId = localStorage.getItem('userId'); // Retrieve the user ID from localStorage
+
+    if (!userId) {
+      this.errorMessage = 'User ID is missing. Please log in again.';
+      return;
+    }
 
     // Setting the Authorization header
     const headers = new HttpHeaders().set('Authorization', `Bearer ${localStorage.getItem('authToken')}`);
