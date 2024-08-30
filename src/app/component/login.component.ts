@@ -31,15 +31,16 @@ export class LoginComponent {
         localStorage.setItem('authToken', response.token);
         localStorage.setItem('userId', response.user.id.toString());
         
-        // Ensure that libraryId is retrieved from the response and stored in localStorage
+        // Check if the user has any libraries
         if (response.user.libraries && response.user.libraries.length > 0) {
           localStorage.setItem('libraryId', response.user.libraries[0].id.toString());
+          this.router.navigate(['/home']); // Redirect to home
         } else {
-          console.error('No library found for the user.');
+          console.warn('No library found for the user.');
+          this.router.navigate(['/create-library']); // Redirect to a page where they can create a library
         }
   
         this.close(); // Close the modal after login
-        this.router.navigate(['/home']); // Redirect to home
       },
       error: () => {
         this.errorMessage = 'Invalid username or password';
