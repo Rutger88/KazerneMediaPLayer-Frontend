@@ -43,9 +43,22 @@ export class MediaService {
     if (currentIndex !== -1 && currentIndex < this.mediaCache.length - 1) {
       return of(this.mediaCache[currentIndex + 1]);  // Return next media from cache if available
     } else {
+      // Fetch the next media from the backend if it's not in the cache
       return this.http.get<Media>(`${this.baseUrl}/next/${currentId}`, { headers: this.getAuthHeaders() }).pipe(
+        tap(media => {
+          this.updateCache(media);  // Ensure the cache is updated with the next media
+        }),
         catchError(this.handleError<Media>('playNext'))
       );
+    }
+  }
+  
+  private updateCache(media: Media) {
+    const existingIndex = this.mediaCache.findIndex(m => m.id === media.id);
+    if (existingIndex === -1) {
+      this.mediaCache.push(media);  // Add new media to the cache if it's not already there
+    } else {
+      this.mediaCache[existingIndex] = media;  // Update existing media in the cache
     }
   }
 
