@@ -30,22 +30,32 @@ export class AppComponent implements OnInit {
   constructor(private mediaService: MediaService, private router: Router) {}
 
   ngOnInit() {
+    this.initializeApp();
+  }
+
+  private initializeApp() {
     const authToken = localStorage.getItem('authToken');
     if (authToken) {
-      // If token exists, fetch media data
-      this.mediaService.getMediaData().subscribe({
-        next: (data) => {
-          this.mediaData = data;
-          console.log(data);
-        },
-        error: (err) => console.error('Error fetching media data:', err),
-        complete: () => console.log('Media data fetching complete')
-      });
+      this.fetchMediaData();
     } else {
-      // No token found, redirect to login
-      console.error('No auth token found, redirecting to login.');
-      this.router.navigate(['/login']);
+      this.redirectToLogin();
     }
+  }
+
+  private fetchMediaData() {
+    this.mediaService.getMediaData().subscribe({
+      next: (data) => {
+        this.mediaData = data;
+        console.log('Media data:', data);
+      },
+      error: (err) => console.error('Error fetching media data:', err),
+      complete: () => console.log('Media data fetching complete')
+    });
+  }
+
+  private redirectToLogin() {
+    console.error('No auth token found, redirecting to login.');
+    this.router.navigate(['/login']);
   }
 
   isAuthenticated(): boolean {
@@ -53,8 +63,8 @@ export class AppComponent implements OnInit {
   }
 
   logout() {
-    localStorage.clear();  
-    this.router.navigate(['/login']);  
+    localStorage.clear();
+    this.router.navigate(['/login']);
   }
 
   openModal(modalType: string) {
@@ -68,10 +78,10 @@ export class AppComponent implements OnInit {
   closeModal(modalType: string) {
     if (modalType === 'loginModal') {
       this.isLoginModalOpen = false;
-      this.router.navigate(['/home']);  
+      this.router.navigate(['/home']);
     } else if (modalType === 'registerModal') {
       this.isRegisterModalOpen = false;
-      this.router.navigate(['/home']);  
+      this.router.navigate(['/home']);
     }
   }
 }

@@ -18,7 +18,7 @@ export class MediaService {
     if (this.mediaCache.length > 0) {
       return of(this.mediaCache);  // Return cached media data
     } else {
-      return this.http.get<Media[]>(`${this.baseUrl}`, { headers: this.getAuthHeaders() }).pipe(
+      return this.http.get<Media[]>(this.baseUrl, { headers: this.getAuthHeaders() }).pipe(
         tap(data => this.mediaCache = data),  // Cache the result
         catchError(this.handleError<Media[]>('getMediaData', []))
       );
@@ -32,6 +32,7 @@ export class MediaService {
       return of(media);  // Return from cache if available
     } else {
       return this.http.get<Media>(`${this.baseUrl}/play/${id}`, { headers: this.getAuthHeaders() }).pipe(
+        tap(media => this.updateCache(media)),  // Update cache with fetched media
         catchError(this.handleError<Media>('playMedia'))
       );
     }
@@ -43,22 +44,10 @@ export class MediaService {
     if (currentIndex !== -1 && currentIndex < this.mediaCache.length - 1) {
       return of(this.mediaCache[currentIndex + 1]);  // Return next media from cache if available
     } else {
-      // Fetch the next media from the backend if it's not in the cache
       return this.http.get<Media>(`${this.baseUrl}/next/${currentId}`, { headers: this.getAuthHeaders() }).pipe(
-        tap(media => {
-          this.updateCache(media);  // Ensure the cache is updated with the next media
-        }),
+        tap(media => this.updateCache(media)),  // Ensure the cache is updated with the next media
         catchError(this.handleError<Media>('playNext'))
       );
-    }
-  }
-  
-  private updateCache(media: Media) {
-    const existingIndex = this.mediaCache.findIndex(m => m.id === media.id);
-    if (existingIndex === -1) {
-      this.mediaCache.push(media);  // Add new media to the cache if it's not already there
-    } else {
-      this.mediaCache[existingIndex] = media;  // Update existing media in the cache
     }
   }
 
@@ -69,6 +58,7 @@ export class MediaService {
       return of(this.mediaCache[currentIndex - 1]);  // Return previous media from cache if available
     } else {
       return this.http.get<Media>(`${this.baseUrl}/previous/${currentId}`, { headers: this.getAuthHeaders() }).pipe(
+        tap(media => this.updateCache(media)),  // Ensure the cache is updated with the previous media
         catchError(this.handleError<Media>('playPrevious'))
       );
     }
@@ -118,5 +108,15 @@ export class MediaService {
 
       return throwError(() => new Error('Something went wrong; please try again later.'));
     };
+  }
+
+  // Private method to update cache with new or updated media
+  private updateCache(media: Media) {
+    const existingIndex = this.mediaCache.findIndex(m => m.id === media.id);
+    if (existingIndex === -1) {
+      this.mediaCache.push(media);  // Add new media to the cache if it's not already there
+    } else {
+      this.mediaCache[existingIndex] = media;  // Update existing media in the cache
+    }
   }
 }

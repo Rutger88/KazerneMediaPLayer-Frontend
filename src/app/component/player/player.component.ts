@@ -1,7 +1,7 @@
 import { Component, Inject, PLATFORM_ID, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MediaService } from '@services/media.service';
-import { AuthService } from '@services/auth.service';  // Import AuthService
+import { AuthService } from '@services/auth.service';
 import { CommonModule } from '@angular/common';
 import { Media } from '@app/interfaces/media.interface';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -25,7 +25,7 @@ export class PlayerComponent implements AfterViewInit {
 
   constructor(
     private mediaService: MediaService,
-    private authService: AuthService,  // Inject AuthService
+    private authService: AuthService,
     private http: HttpClient,
     private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: object
@@ -40,42 +40,27 @@ export class PlayerComponent implements AfterViewInit {
 
   playMedia(id: number): void {
     this.mediaService.playMedia(id).subscribe({
-      next: (media) => {
-        this.setupMediaPlayback(media);
-      },
+      next: (media) => this.setupMediaPlayback(media),
       error: (error) => {
         if (error.status === 401) {
-          this.authService.refreshToken().subscribe({
-            next: () => {
-              // Retry the play media request after refreshing token
-              this.mediaService.playMedia(id).subscribe({
-                next: (media) => this.setupMediaPlayback(media),
-                error: (retryError) => console.error('Retry failed:', retryError),
-              });
-            },
-            error: (refreshError) => {
-              console.error('Failed to refresh token:', refreshError);
-              this.authService.logout();
-            }
-          });
+          this.handleTokenRefresh(() => this.playMedia(id));
         } else {
           console.error('Error playing media:', error);
+          this.errorMessage = 'Failed to play media. Please try again later.';
         }
       }
     });
   }
-  
+
   setupMediaPlayback(media: Media) {
-    console.log('Playing media:', media);
-  
-    if (media.type && media.type.startsWith('audio')) {
+    if (media.type?.startsWith('audio')) {
       this.isAudio = true;
-    } else if (media.type && media.type.startsWith('video')) {
+    } else if (media.type?.startsWith('video')) {
       this.isAudio = false;
     }
-  
+
     this.currentMediaUrl = `http://localhost:8080/media/stream/${media.id}`;
-  
+
     if (this.isAudio && this.audioElement) {
       this.audioElement.nativeElement.src = this.currentMediaUrl;
       this.audioElement.nativeElement.play().catch(error => console.error('Error playing audio:', error));
@@ -84,10 +69,6 @@ export class PlayerComponent implements AfterViewInit {
       this.videoElement.nativeElement.play().catch(error => console.error('Error playing video:', error));
     }
   }
-  
-  
-  
-  
 
   stopMedia() {
     if (!isPlatformBrowser(this.platformId)) {
@@ -102,9 +83,7 @@ export class PlayerComponent implements AfterViewInit {
       this.videoElement.nativeElement.currentTime = 0;
     }
 
-    if (this.currentMediaUrl) {
-      window.URL.revokeObjectURL(this.currentMediaUrl);
-    }
+    // No need to revokeObjectURL for HTTP URLs
     this.currentMediaUrl = undefined;
   }
 
@@ -112,10 +91,10 @@ export class PlayerComponent implements AfterViewInit {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-  
+
     this.mediaService.playNext(id).subscribe({
       next: (media: Media) => {
-        if (media && media.id) {
+        if (media?.id) {
           console.log(`Playing next media with ID: ${media.id}`);
           this.playMedia(media.id);
         } else {
@@ -129,16 +108,15 @@ export class PlayerComponent implements AfterViewInit {
       }
     });
   }
-  
 
   playPrevious(id: number) {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-  
+
     this.mediaService.playPrevious(id).subscribe({
       next: (media: Media) => {
-        if (media && media.id) {
+        if (media?.id) {
           console.log(`Playing previous media with ID: ${media.id}`);
           this.playMedia(media.id);
         } else {
@@ -152,22 +130,17 @@ export class PlayerComponent implements AfterViewInit {
       }
     });
   }
-  
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      this.uploadMedia(file);
+    if (input.files?.length) {
+      this.uploadMedia(input.files[0]);
     }
   }
 
   uploadMedia(file: File) {
-    const libraryId = localStorage.getItem('libraryId');  // Ensure libraryId is correct
-    const authToken = localStorage.getItem('authToken');  // Ensure authToken is retrieved
-
-    console.log('Attempting to upload media with Library ID:', libraryId);
-    console.log('Authorization Token:', authToken);
+    const libraryId = localStorage.getItem('libraryId');
+    const authToken = localStorage.getItem('authToken');
 
     if (!authToken || !libraryId) {
       this.errorMessage = 'You must be logged in to upload files.';
@@ -186,10 +159,21 @@ export class PlayerComponent implements AfterViewInit {
             this.errorMessage = 'You do not have permission to upload to this library.';
           } else if (err.status === 401) {
             this.errorMessage = 'Unauthorized. Please log in again.';
+            this.authService.logout();
           } else {
             this.errorMessage = 'Failed to upload file. Please try again later.';
           }
         }
       });
+  }
+
+  private handleTokenRefresh(retryCallback: () => void) {
+    this.authService.refreshToken().subscribe({
+      next: () => retryCallback(),
+      error: (refreshError) => {
+        console.error('Failed to refresh token:', refreshError);
+        this.authService.logout();
+      }
+    });
   }
 }
