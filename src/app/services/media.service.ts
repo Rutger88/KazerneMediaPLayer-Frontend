@@ -1,64 +1,109 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, of, throwError } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 import { Media } from '@app/interfaces/media.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MediaService {
-  private baseUrl = 'http://localhost:8080/media'; 
+  private baseUrl = 'http://localhost:8080/media';
+  private mediaCache: Media[] = [];
 
   constructor(private http: HttpClient) {}
 
-  // Existing methods...
-
-  // New method to get the media list
-  getMediaList(): Observable<Media[]> {
-    return this.http.get<Media[]>(`${this.baseUrl}/list`).pipe(
-      catchError(this.handleError)
-    );
-  }
-
+  // Fetch media data, either from cache or the backend
   getMediaData(): Observable<Media[]> {
-    return this.http.get<Media[]>(`${this.baseUrl}`).pipe(
-      catchError(this.handleError)
-    );
+    if (this.mediaCache.length > 0) {
+      return of(this.mediaCache);  // Return cached media data
+    } else {
+      return this.http.get<Media[]>(`${this.baseUrl}`, { headers: this.getAuthHeaders() }).pipe(
+        tap(data => this.mediaCache = data),  // Cache the result
+        catchError(this.handleError<Media[]>('getMediaData', []))
+      );
+    }
   }
 
+  // Play a specific media file by ID
   playMedia(id: number): Observable<Media> {
-    return this.http.get<Media>(`${this.baseUrl}/play/${id}`).pipe(
-      catchError(this.handleError)
+    const media = this.mediaCache.find(m => m.id === id);
+    if (media) {
+      return of(media);  // Return from cache if available
+    } else {
+      return this.http.get<Media>(`${this.baseUrl}/play/${id}`, { headers: this.getAuthHeaders() }).pipe(
+        catchError(this.handleError<Media>('playMedia'))
+      );
+    }
+  }
+
+  // Play the next media file by ID
+  playNext(currentId: number): Observable<Media> {
+    const currentIndex = this.mediaCache.findIndex(m => m.id === currentId);
+    if (currentIndex !== -1 && currentIndex < this.mediaCache.length - 1) {
+      return of(this.mediaCache[currentIndex + 1]);  // Return next media from cache if available
+    } else {
+      return this.http.get<Media>(`${this.baseUrl}/next/${currentId}`, { headers: this.getAuthHeaders() }).pipe(
+        catchError(this.handleError<Media>('playNext'))
+      );
+    }
+  }
+
+  // Play the previous media file by ID
+  playPrevious(currentId: number): Observable<Media> {
+    const currentIndex = this.mediaCache.findIndex(m => m.id === currentId);
+    if (currentIndex > 0) {
+      return of(this.mediaCache[currentIndex - 1]);  // Return previous media from cache if available
+    } else {
+      return this.http.get<Media>(`${this.baseUrl}/previous/${currentId}`, { headers: this.getAuthHeaders() }).pipe(
+        catchError(this.handleError<Media>('playPrevious'))
+      );
+    }
+  }
+
+  // Upload a media file to the backend
+  uploadMedia(file: File): Observable<any> {
+    const libraryId = localStorage.getItem('libraryId');
+    if (!libraryId) {
+      return throwError(() => new Error('Library ID is missing'));
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http.post(`${this.baseUrl}/upload?libraryId=${libraryId}`, formData, { headers: this.getAuthHeaders() }).pipe(
+      tap(() => console.log('File uploaded successfully')),
+      catchError(this.handleError('uploadMedia'))
     );
   }
 
-  stopMedia(): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/stop`, {}).pipe(
-      catchError(this.handleError)
-    );
+  // Private method to get authorization headers
+  private getAuthHeaders(): HttpHeaders {
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) {
+      throw new Error('No auth token found');
+    }
+
+    return new HttpHeaders({
+      'Authorization': `Bearer ${authToken}`,
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    });
   }
 
-  playNext(id: number): Observable<Media> {
-    return this.http.get<Media>(`${this.baseUrl}/next/${id}`).pipe(
-      catchError(this.handleError)
-    );
-  }
+  // Private method to handle errors
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+      console.error(`${operation} failed: ${error.message}`);
 
-  playPrevious(id: number): Observable<Media> {
-    return this.http.get<Media>(`${this.baseUrl}/previous/${id}`).pipe(
-      catchError(this.handleError)
-    );
-  }
+      // Handle unauthorized errors globally
+      if (error.status === 401) {
+        console.error('User is unauthorized, consider redirecting to login.');
+        // Optionally, redirect to login page or refresh token here
+      }
 
-  streamMedia(id: number): Observable<Blob> {
-    return this.http.get(`${this.baseUrl}/stream/${id}`, { responseType: 'blob' }).pipe(
-      catchError(this.handleError)
-    );
-  }
-
-  private handleError(error: any): Observable<never> {
-    console.error('An error occurred:', error);
-    return throwError(() => new Error('Something went wrong; please try again later.'));
+      return throwError(() => new Error('Something went wrong; please try again later.'));
+    };
   }
 }

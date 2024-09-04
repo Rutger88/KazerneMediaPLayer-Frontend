@@ -1,7 +1,15 @@
 <nav>
   <a routerLink="/home" routerLinkActive="active">Home</a>
-  <a href="javascript:void(0);" (click)="openModal('loginModal')">Login</a>
-  <a href="javascript:void(0);" (click)="openModal('registerModal')">Register</a>
+  
+  <!-- Conditional rendering based on authentication status -->
+  <ng-container *ngIf="!isAuthenticated(); else loggedInTemplate">
+    <a href="javascript:void(0);" (click)="openModal('loginModal')">Login</a>
+    <a href="javascript:void(0);" (click)="openModal('registerModal')">Register</a>
+  </ng-container>
+
+  <ng-template #loggedInTemplate>
+    <a href="javascript:void(0);" (click)="logout()">Logout</a>
+  </ng-template>
 </nav>
 
 <!-- Router outlet for other components -->

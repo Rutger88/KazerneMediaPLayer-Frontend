@@ -1,6 +1,7 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MovieService } from '@services/movie.service';
+import { Movie } from '@app/interfaces/movie.interface'; // Import the Movie interface
 
 @Component({
   selector: 'app-movie-player',
@@ -18,7 +19,27 @@ export class MoviePlayerComponent implements OnInit {
   constructor(private movieService: MovieService) {}
   
   ngOnInit() {
-    this.playMovie(5);  // Automatically try to play movie with ID 5 on init
+    this.playFirstMp4Movie();  // Automatically play the first available mp4 movie on init
+  }
+
+  playFirstMp4Movie() {
+    console.log('Searching for the first mp4 movie...');
+    this.movieService.getMovies().subscribe({
+      next: (movies: Movie[]) => {  // Add type annotation for movies
+        const firstMp4Movie = movies.find(movie => movie.type === 'video/mp4'); // Use the Movie interface
+        if (firstMp4Movie) {
+          console.log('First mp4 movie found:', firstMp4Movie);
+          this.playMovie(firstMp4Movie.id);
+        } else {
+          this.errorMessage = 'No mp4 movies available.';
+          console.warn(this.errorMessage);
+        }
+      },
+      error: (err: any) => {  // Add type annotation
+        console.error('Error fetching movies:', err);
+        this.errorMessage = `Failed to fetch movies. ${err.message || 'Unknown error'}`;
+      }
+    });
   }
 
   playMovie(id: number) {
@@ -29,7 +50,7 @@ export class MoviePlayerComponent implements OnInit {
         this.setVideoSource(blob);
         this.errorMessage = undefined;
       },
-      error: (err) => {
+      error: (err: any) => {  // Add type annotation
         console.error('Error streaming movie:', err);
         this.errorMessage = `Failed to stream movie. ${err.message || 'Unknown error'}`;
       },
@@ -51,7 +72,7 @@ export class MoviePlayerComponent implements OnInit {
           this.setVideoSource(blob);
           this.errorMessage = undefined;
         },
-        error: (err) => {
+        error: (err: any) => {  // Add type annotation
           console.error('Error streaming previous movie:', err);
           this.errorMessage = `Failed to stream previous movie. ${err.message || 'Unknown error'}`;
         },
@@ -68,7 +89,7 @@ export class MoviePlayerComponent implements OnInit {
           this.setVideoSource(blob);
           this.errorMessage = undefined;
         },
-        error: (err) => {
+        error: (err: any) => {  // Add type annotation
           console.error('Error streaming next movie:', err);
           this.errorMessage = `Failed to stream next movie. ${err.message || 'Unknown error'}`;
         },

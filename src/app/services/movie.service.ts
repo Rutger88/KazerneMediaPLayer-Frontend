@@ -16,14 +16,14 @@ export class MovieService {
     return this.http.get(`${this.baseUrl}/stream/${id}`, {
       responseType: 'blob',
     }).pipe(
-      catchError(this.handleError)
+      catchError(this.handleError)  // Handling errors
     );
   }
 
   // Stop the currently playing movie
   stopMovie(): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/stop`, {}).pipe(
-      catchError(this.handleError)
+      catchError(this.handleError)  // Handling errors
     );
   }
 
@@ -32,7 +32,7 @@ export class MovieService {
     return this.http.get(`${this.baseUrl}/next/${id}`, {
       responseType: 'blob',
     }).pipe(
-      catchError(this.handleError)
+      catchError(this.handleError)  // Handling errors
     );
   }
 
@@ -41,13 +41,27 @@ export class MovieService {
     return this.http.get(`${this.baseUrl}/previous/${id}`, {
       responseType: 'blob',
     }).pipe(
-      catchError(this.handleError)
+      catchError(this.handleError)  // Handling errors
     );
   }
 
+  // New method to get a list of movies
+  getMovies(): Observable<any[]> {  // Return type can be more specific if you have a Movie interface
+    return this.http.get<any[]>(`${this.baseUrl}`).pipe(
+      catchError(this.handleError)  // Handle error appropriately
+    );
+  }
+  
   // Handle HTTP errors
   private handleError(error: HttpErrorResponse) {
-    console.error('An error occurred:', error.message); // Log error message
-    return throwError(() => new Error('Something went wrong; please try again later.'));
+    let errorMessage = 'Something went wrong; please try again later.';
+    if (error.error instanceof ErrorEvent) {
+      // Client-side error
+      console.error('Client-side error:', error.error.message);
+    } else {
+      // Server-side error
+      console.error(`Server-side error: Status ${error.status}, Message: ${error.message}`);
+    }
+    return throwError(() => new Error(errorMessage));
   }
 }

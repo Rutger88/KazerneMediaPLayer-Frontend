@@ -25,26 +25,24 @@ export class LoginComponent {
   }
 
   onLogin() {
-    this.http.post<any>('http://localhost:8080/user/login', { username: this.username, password: this.password }).subscribe({
-      next: (response) => {
-        console.log('Login response:', response);
-        localStorage.setItem('authToken', response.token);
-        localStorage.setItem('userId', response.user.id.toString());
-        
-        // Check if the user has any libraries
-        if (response.user.libraries && response.user.libraries.length > 0) {
-          localStorage.setItem('libraryId', response.user.libraries[0].id.toString());
+    this.http.post<any>('http://localhost:8080/user/login', { username: this.username, password: this.password })
+      .subscribe({
+        next: (response) => {
+          console.log('Login response:', response);
+          localStorage.setItem('authToken', response.token);
+          localStorage.setItem('libraryId', response.libraryId.toString());
           this.router.navigate(['/home']); // Redirect to home
-        } else {
-          console.warn('No library found for the user.');
-          this.router.navigate(['/create-library']); // Redirect to a page where they can create a library
+        },
+        error: (err) => {
+          console.error('Login failed:', err);
+          if (err.status === 401) {
+            this.errorMessage = 'Session expired, please log in again.';
+            localStorage.clear();
+            this.router.navigate(['/login']);
+          } else {
+            this.errorMessage = 'Invalid username or password';
+          }
         }
-  
-        this.close(); // Close the modal after login
-      },
-      error: () => {
-        this.errorMessage = 'Invalid username or password';
-      }
-    });
+      });
   }
 }

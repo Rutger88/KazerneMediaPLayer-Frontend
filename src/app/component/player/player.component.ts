@@ -1,6 +1,7 @@
 import { Component, Inject, PLATFORM_ID, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MediaService } from '@services/media.service';
+import { AuthService } from '@services/auth.service';  // Import AuthService
 import { CommonModule } from '@angular/common';
 import { Media } from '@app/interfaces/media.interface';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -24,67 +25,83 @@ export class PlayerComponent implements AfterViewInit {
 
   constructor(
     private mediaService: MediaService,
+    private authService: AuthService,  // Inject AuthService
     private http: HttpClient,
-    private cdr: ChangeDetectorRef, // Inject ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: object
   ) {}
 
   ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      this.isLoggedIn = !!localStorage.getItem('authToken'); // Check if the user is logged in
-      this.cdr.detectChanges(); // Manually trigger change detection
+      this.isLoggedIn = !!localStorage.getItem('authToken');
+      this.cdr.detectChanges();
     }
   }
 
-  playMedia(id: number) {
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-
+  playMedia(id: number): void {
     this.mediaService.playMedia(id).subscribe({
-      next: (media: Media) => {
-        this.isAudio = media.type?.startsWith('audio/') || false;
-        this.mediaService.streamMedia(media.id).subscribe({
-          next: (blob: Blob) => {
-            if (this.currentMediaUrl) {
-              window.URL.revokeObjectURL(this.currentMediaUrl);
-            }
-            this.currentMediaUrl = window.URL.createObjectURL(blob);
-            this.errorMessage = undefined;
-            if (this.isAudio) {
-              this.audioElement.nativeElement.src = this.currentMediaUrl;
-              this.audioElement.nativeElement.play();
-            } else {
-              this.videoElement.nativeElement.src = this.currentMediaUrl;
-              this.videoElement.nativeElement.play();
-            }
-          },
-          error: (err) => {
-            console.error('Error streaming media:', err);
-            this.currentMediaUrl = undefined;
-            this.errorMessage = 'Failed to stream media. Please try again later.';
-          }
-        });
+      next: (media) => {
+        this.setupMediaPlayback(media);
       },
-      error: (err) => {
-        console.error('Error playing media:', err);
-        this.errorMessage = 'Failed to play media. Please try again later.';
+      error: (error) => {
+        if (error.status === 401) {
+          this.authService.refreshToken().subscribe({
+            next: () => {
+              // Retry the play media request after refreshing token
+              this.mediaService.playMedia(id).subscribe({
+                next: (media) => this.setupMediaPlayback(media),
+                error: (retryError) => console.error('Retry failed:', retryError),
+              });
+            },
+            error: (refreshError) => {
+              console.error('Failed to refresh token:', refreshError);
+              this.authService.logout();
+            }
+          });
+        } else {
+          console.error('Error playing media:', error);
+        }
       }
     });
   }
+  
+  setupMediaPlayback(media: Media) {
+    console.log('Playing media:', media);
+  
+    if (media.type && media.type.startsWith('audio')) {
+      this.isAudio = true;
+    } else if (media.type && media.type.startsWith('video')) {
+      this.isAudio = false;
+    }
+  
+    this.currentMediaUrl = `http://localhost:8080/media/stream/${media.id}`;
+  
+    if (this.isAudio && this.audioElement) {
+      this.audioElement.nativeElement.src = this.currentMediaUrl;
+      this.audioElement.nativeElement.play().catch(error => console.error('Error playing audio:', error));
+    } else if (this.videoElement) {
+      this.videoElement.nativeElement.src = this.currentMediaUrl;
+      this.videoElement.nativeElement.play().catch(error => console.error('Error playing video:', error));
+    }
+  }
+  
+  
+  
+  
 
   stopMedia() {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
 
-    if (this.isAudio) {
+    if (this.isAudio && this.audioElement) {
       this.audioElement.nativeElement.pause();
       this.audioElement.nativeElement.currentTime = 0;
-    } else {
+    } else if (this.videoElement) {
       this.videoElement.nativeElement.pause();
       this.videoElement.nativeElement.currentTime = 0;
     }
+
     if (this.currentMediaUrl) {
       window.URL.revokeObjectURL(this.currentMediaUrl);
     }
@@ -95,12 +112,14 @@ export class PlayerComponent implements AfterViewInit {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-
+  
     this.mediaService.playNext(id).subscribe({
       next: (media: Media) => {
-        if (media) {
+        if (media && media.id) {
+          console.log(`Playing next media with ID: ${media.id}`);
           this.playMedia(media.id);
         } else {
+          console.warn('No next media found, or media data is invalid.');
           this.errorMessage = 'No more media available.';
         }
       },
@@ -110,15 +129,22 @@ export class PlayerComponent implements AfterViewInit {
       }
     });
   }
+  
 
   playPrevious(id: number) {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-
+  
     this.mediaService.playPrevious(id).subscribe({
       next: (media: Media) => {
-        this.playMedia(media.id);
+        if (media && media.id) {
+          console.log(`Playing previous media with ID: ${media.id}`);
+          this.playMedia(media.id);
+        } else {
+          console.warn('No previous media found, or media data is invalid.');
+          this.errorMessage = 'No previous media available.';
+        }
       },
       error: (err) => {
         console.error('Error playing previous media:', err);
@@ -126,43 +152,44 @@ export class PlayerComponent implements AfterViewInit {
       }
     });
   }
-
-  uploadMedia(file: File) {
-    const formData = new FormData();
-    formData.append('file', file);
   
-    const libraryId = localStorage.getItem('libraryId'); // Retrieve the libraryId from localStorage
-    console.log(`Retrieved libraryId from localStorage: ${libraryId}`);
-  
-    if (!libraryId) {
-      this.errorMessage = 'Library ID is missing. Cannot upload file.';
-      return;
-    }
-  
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${localStorage.getItem('authToken')}`);
-  
-    this.http.post(`http://localhost:8080/media/upload?libraryId=${libraryId}`, formData, { headers }).subscribe({
-      next: () => {
-        console.log('File uploaded successfully');
-        // Optionally, refresh the media list after upload
-      },
-      error: (err) => {
-        console.error('Error uploading media:', err);
-        this.errorMessage = 'Failed to upload file. Please try again later.';
-      }
-    });
-  }
 
   onFileSelected(event: Event) {
-    if (!this.isLoggedIn) {
-      this.errorMessage = 'You must be logged in to upload files.';
-      return;
-    }
-
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
       this.uploadMedia(file);
     }
+  }
+
+  uploadMedia(file: File) {
+    const libraryId = localStorage.getItem('libraryId');  // Ensure libraryId is correct
+    const authToken = localStorage.getItem('authToken');  // Ensure authToken is retrieved
+
+    console.log('Attempting to upload media with Library ID:', libraryId);
+    console.log('Authorization Token:', authToken);
+
+    if (!authToken || !libraryId) {
+      this.errorMessage = 'You must be logged in to upload files.';
+      return;
+    }
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${authToken}`);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    this.http.post(`http://localhost:8080/media/upload?libraryId=${libraryId}`, formData, { headers })
+      .subscribe({
+        next: () => console.log('File uploaded successfully'),
+        error: (err) => {
+          if (err.status === 403) {
+            this.errorMessage = 'You do not have permission to upload to this library.';
+          } else if (err.status === 401) {
+            this.errorMessage = 'Unauthorized. Please log in again.';
+          } else {
+            this.errorMessage = 'Failed to upload file. Please try again later.';
+          }
+        }
+      });
   }
 }
