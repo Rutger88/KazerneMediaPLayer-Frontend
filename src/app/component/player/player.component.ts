@@ -40,7 +40,10 @@ export class PlayerComponent implements AfterViewInit {
 
   playMedia(id: number): void {
     this.mediaService.playMedia(id).subscribe({
-      next: (media) => this.setupMediaPlayback(media),
+      next: (media) => {
+        this.currentId = media.id;  // Update the current media ID
+        this.setupMediaPlayback(media);
+      },
       error: (error) => {
         if (error.status === 401) {
           this.handleTokenRefresh(() => this.playMedia(id));
@@ -87,49 +90,49 @@ export class PlayerComponent implements AfterViewInit {
     this.currentMediaUrl = undefined;
   }
 
-  playNext(id: number) {
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-
-    this.mediaService.playNext(id).subscribe({
-      next: (media: Media) => {
-        if (media?.id) {
-          console.log(`Playing next media with ID: ${media.id}`);
-          this.playMedia(media.id);
-        } else {
-          console.warn('No next media found, or media data is invalid.');
-          this.errorMessage = 'No more media available.';
-        }
-      },
-      error: (err) => {
-        console.error('Error playing next media:', err);
-        this.errorMessage = 'Failed to play next media. Please try again later.';
-      }
-    });
+playNext(): void {  // No need to pass the ID here
+  if (!isPlatformBrowser(this.platformId)) {
+    return;
   }
 
-  playPrevious(id: number) {
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-
-    this.mediaService.playPrevious(id).subscribe({
-      next: (media: Media) => {
-        if (media?.id) {
-          console.log(`Playing previous media with ID: ${media.id}`);
-          this.playMedia(media.id);
-        } else {
-          console.warn('No previous media found, or media data is invalid.');
-          this.errorMessage = 'No previous media available.';
-        }
-      },
-      error: (err) => {
-        console.error('Error playing previous media:', err);
-        this.errorMessage = 'Failed to play previous media. Please try again later.';
+  this.mediaService.playNext(this.currentId).subscribe({
+    next: (media: Media) => {
+      if (media?.id) {
+        console.log(`Playing next media with ID: ${media.id}`);
+        this.playMedia(media.id);  // Play the next media
+      } else {
+        console.warn('No next media found, or media data is invalid.');
+        this.errorMessage = 'No more media available.';
       }
-    });
+    },
+    error: (err) => {
+      console.error('Error playing next media:', err);
+      this.errorMessage = 'Failed to play next media. Please try again later.';
+    }
+  });
+}
+
+playPrevious(): void {  // No need to pass the ID here
+  if (!isPlatformBrowser(this.platformId)) {
+    return;
   }
+
+  this.mediaService.playPrevious(this.currentId).subscribe({
+    next: (media: Media) => {
+      if (media?.id) {
+        console.log(`Playing previous media with ID: ${media.id}`);
+        this.playMedia(media.id);  // Play the previous media
+      } else {
+        console.warn('No previous media found, or media data is invalid.');
+        this.errorMessage = 'No previous media available.';
+      }
+    },
+    error: (err) => {
+      console.error('Error playing previous media:', err);
+      this.errorMessage = 'Failed to play previous media. Please try again later.';
+    }
+  });
+}
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
