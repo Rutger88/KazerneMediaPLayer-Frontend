@@ -1,0 +1,28 @@
+<div *ngIf="otherLibraries.length > 0; else noLibraries">
+    <h2>Other Users' Libraries</h2>
+    <ul>
+      <li *ngFor="let library of otherLibraries">
+        <strong>{{ library.name }}</strong> (Owner: {{ library.user.username }})
+        <button (click)="shareLibrary(library)" class="btn btn-primary">Share</button>
+        
+        <!-- Display associated media files -->
+        <ul *ngIf="library.mediaFiles?.length > 0">
+          <li *ngFor="let media of library.mediaFiles">
+            <div>
+              <img *ngIf="media.thumbnail" [src]="media.thumbnail" alt="{{ media.name }}" width="50">
+              <strong>{{ media.name }}</strong> - {{ media.duration | number }} seconds
+              <br>
+              <a [href]="media.url" target="_blank">Play</a> <!-- Link to play the media -->
+            </div>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  
+  <ng-template #noLibraries>
+    <p>No other users' libraries available.</p>
+  </ng-template>
+  
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+  
