@@ -7,10 +7,16 @@
     <h2>{{ currentlyPlayingFileName || 'No media is playing' }}</h2>
   </div>
 
-  <!-- Media Content -->
+  <!-- Media Content with the unified audio player -->
   <div class="media-content">
-    <audio #audioElement class="media-audio" controls></audio>
+    <audio id="audio-player" #audioElement class="media-audio" controls>
+      <source [src]="currentMediaUrl" type="audio/mpeg" />
+      Your browser does not support the audio tag.
+    </audio>
   </div>
+
+  <!-- Audio Visualizer -->
+  <app-audio-visualizer></app-audio-visualizer>
 
   <!-- Media Controls -->
   <div class="media-controls">
@@ -62,3 +68,7 @@
   </div>
 </div>
 
+<!-- Separate visualizer container -->
+<div class="visualizer-container">
+  <canvas id="audio-visualizer"></canvas>
+</div>

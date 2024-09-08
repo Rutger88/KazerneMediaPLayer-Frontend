@@ -3,6 +3,7 @@ import { PlayerComponent } from '@app/component/player/player.component';
 import { MoviePlayerComponent } from '@app/component/player/movieplayer.component';
 import { CommonModule } from '@angular/common';  // Import CommonModule
 
+
 @Component({
   selector: 'app-media-and-movie-player',
   standalone: true,
