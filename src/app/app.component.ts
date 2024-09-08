@@ -3,8 +3,7 @@ import { RouterOutlet, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MediaService } from './services/media.service';
 import { ParentComponent } from './component/player/parent.component';
-import { LoginComponent } from './component/login.component';
-import { RegistrationComponent } from './component/register.component';
+import { LogregComponent } from './component/logreg.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './services/auth.interceptor';
 import { AuthService } from './services/auth.service'; 
@@ -16,8 +15,8 @@ import { AuthService } from './services/auth.service';
     RouterOutlet,
     CommonModule,
     ParentComponent,
-    LoginComponent,
-    RegistrationComponent,
+    LogregComponent,
+    
   ],
   providers: [
     MediaService,

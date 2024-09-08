@@ -1,0 +1,56 @@
+<div class="modal">
+    <div class="modal-content">
+      <span class="close-button" (click)="close()">×</span>
+      
+      <!-- Logo Section -->
+      <div class="logo-container">
+        <img src="assets/logo.png" alt="Media Player Logo" class="logo">
+      </div>
+  
+      <!-- Tab Navigation for Login/Register -->
+      <div class="tab-navigation">
+        <button [class.active]="isLoginActive" (click)="toggleForm('login')">Login</button>
+        <button [class.active]="!isLoginActive" (click)="toggleForm('register')">Register</button>
+      </div>
+  
+      <!-- Login Form -->
+      <div *ngIf="isLoginActive" class="form-container">
+        <h2>Login</h2>
+        <form (submit)="onLogin()">
+          <div class="form-group">
+            <label for="login-username">Username</label>
+            <input type="text" id="login-username" [(ngModel)]="username" name="username" required />
+          </div>
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" [(ngModel)]="password" name="password" required />
+          </div>
+          <button type="submit" class="login-button">Login</button>
+        </form>
+      </div>
+  
+      <!-- Registration Form -->
+      <div *ngIf="!isLoginActive" class="form-container">
+        <h2>Register</h2>
+        <form (submit)="register()">
+          <div class="form-group">
+            <label for="register-username">Username</label>
+            <input type="text" id="register-username" [(ngModel)]="username" name="username" required />
+          </div>
+          <div class="form-group">
+            <label for="register-password">Password</label>
+            <input type="password" id="register-password" [(ngModel)]="password" name="password" required />
+          </div>
+          <div class="form-group">
+            <label for="register-email">Email</label>
+            <input type="email" id="register-email" [(ngModel)]="email" name="email" required />
+          </div>
+          <button type="submit" class="register-button">Register</button>
+        </form>
+      </div>
+  
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+    </div>
+  </div>
+  

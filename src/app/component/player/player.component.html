@@ -1,31 +1,41 @@
 <div class="media-player-container">
-  <div *ngIf="errorMessage" class="error-message">
-    {{ errorMessage }}
-  </div>
-  <div>
-    <h2>Now Playing: {{ currentlyPlayingFileName || 'No media is playing' }}</h2>
-  </div>
-  <!-- Independent Visualizer -->
- <!--  <app-visualizer [audioElement]="audioElement.nativeElement" *ngIf="isAudio"></app-visualizer>-->
-
-  <div class="media-content">
-    <audio #audioElement class="media-audio" *ngIf="isAudio" controls></audio>
-    <video #videoElement class="media-video" *ngIf="!isAudio" controls></video>
-  </div>
-
-  <div class="media-controls">
-    <button (click)="playPrevious()">Previous</button>
-    <button (click)="playMedia(currentId)">Play</button>
-    <button (click)="stopMedia()">Stop</button>
-    <button (click)="playNext()">Next</button>
-  </div>
-
-  <div *ngIf="isLoggedIn" class="upload-section">
-    <label for="file-upload" class="custom-file-upload">
-      <i class="fa fa-cloud-upload"></i> Upload Music
-    </label>
-    <input id="file-upload" type="file" (change)="onFileSelected($event)" />
-  </div>
-
   <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+
+  <div class="now-playing">
+    <h2>{{ currentlyPlayingFileName || 'No media is playing' }}</h2>
+  </div>
+
+  <!-- Media Content -->
+  <div class="media-content">
+    <audio #audioElement class="media-audio" controls></audio>
+  </div>
+
+  <!-- Media Controls -->
+  <div class="media-controls">
+    <button class="media-button" (click)="playPrevious()">
+      <i class="fas fa-backward"></i> Previous
+    </button>
+    <button class="media-button play-button" (click)="playMedia(currentId)">
+      <i class="fas fa-play"></i> Play
+    </button>
+    <button class="media-button" (click)="stopMedia()">
+      <i class="fas fa-stop"></i> Stop
+    </button>
+    <button class="media-button" (click)="playNext()">
+      <i class="fas fa-forward"></i> Next
+    </button>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="media-progress">
+    <div class="progress-bar" [style.width.%]="progress"></div>
+  </div>
+
+  <!-- Upload Section -->
+  <div class="upload-section">
+    <label class="custom-file-upload">
+      <input id="file-upload" type="file" (change)="onFileSelected($event)" />
+      Upload Media
+    </label>
+  </div>
 </div>

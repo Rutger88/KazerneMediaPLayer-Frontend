@@ -16,5 +16,6 @@
 <router-outlet></router-outlet>
 
 <!-- Modals for login and registration -->
-<app-login *ngIf="isLoginModalOpen" (closeModal)="closeModal('loginModal')"></app-login>
-<app-registration *ngIf="isRegisterModalOpen" (closeModal)="closeModal('registerModal')"></app-registration>
+<app-logreg *ngIf="isLoginModalOpen" (closeModal)="closeModal('loginModal')" modalType="login"></app-logreg>
+<app-logreg *ngIf="isRegisterModalOpen" (closeModal)="closeModal('registerModal')" modalType="register"></app-logreg>
+

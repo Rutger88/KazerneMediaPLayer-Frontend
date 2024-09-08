@@ -5,13 +5,13 @@ import { AuthService } from '@services/auth.service';
 import { CommonModule } from '@angular/common';
 import { Media } from '@app/interfaces/media.interface';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { VisualizerComponent } from '@app/component/visualizer/visualizer.component'; 
+
 
 @Component({
   selector: 'app-player',
   templateUrl: './player.component.html',
   styleUrls: ['./player.component.scss'],
-  imports: [CommonModule, VisualizerComponent],
+  imports: [CommonModule],
   standalone: true,
 })
 export class PlayerComponent implements AfterViewInit {
@@ -24,6 +24,7 @@ export class PlayerComponent implements AfterViewInit {
   errorMessage: string | undefined;
   isLoggedIn: boolean = false;
   currentlyPlayingFileName: string | undefined;
+  progress: number = 0; 
 
   constructor(
     private mediaService: MediaService,
@@ -32,6 +33,20 @@ export class PlayerComponent implements AfterViewInit {
     private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: object
   ) {}
+
+  ngOnInit(): void {
+    if (this.audioElement) {
+      // Listen to time updates and update progress
+      this.audioElement.nativeElement.addEventListener('timeupdate', this.updateProgress.bind(this));
+    }
+  }
+
+  updateProgress(): void {
+    const audio = this.audioElement.nativeElement;
+    if (audio && audio.duration) {
+      this.progress = (audio.currentTime / audio.duration) * 100;
+    }
+  }
 
   ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -150,9 +165,15 @@ playPrevious(): void {  // No need to pass the ID here
 }
 
   onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files?.length) {
-      this.uploadMedia(input.files[0]);
+    const fileInput = event.target as HTMLInputElement;
+    if (fileInput.files && fileInput.files.length > 0) {
+      const file = fileInput.files[0];
+      this.currentlyPlayingFileName = file.name;
+      // Load the selected media file into the audio element
+      const audio = this.audioElement.nativeElement;
+      audio.src = URL.createObjectURL(file);
+      audio.load();
+      this.playMedia(this.currentId);
     }
   }
 
