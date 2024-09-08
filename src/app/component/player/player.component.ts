@@ -5,13 +5,13 @@ import { AuthService } from '@services/auth.service';
 import { CommonModule } from '@angular/common';
 import { Media } from '@app/interfaces/media.interface';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-
+import { FormsModule } from '@angular/forms'; // <-- Import FormsModule
 
 @Component({
   selector: 'app-player',
   templateUrl: './player.component.html',
   styleUrls: ['./player.component.scss'],
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   standalone: true,
 })
 export class PlayerComponent implements AfterViewInit {
@@ -24,7 +24,10 @@ export class PlayerComponent implements AfterViewInit {
   errorMessage: string | undefined;
   isLoggedIn: boolean = false;
   currentlyPlayingFileName: string | undefined;
-  progress: number = 0; 
+  progress: number = 0;
+
+  isLibraryModalOpen: boolean = false;
+  newLibrary: any = { name: '' };
 
   constructor(
     private mediaService: MediaService,
@@ -67,6 +70,36 @@ export class PlayerComponent implements AfterViewInit {
       }
     });
   }
+
+    // New Methods for Library functionality
+    openLibraryModal(): void {
+      this.isLibraryModalOpen = true;
+    }
+  
+    closeLibraryModal(): void {
+      this.isLibraryModalOpen = false;
+    }
+  
+    submitLibrary(): void {
+      const userId = localStorage.getItem('userId');  // Replace this with the correct way to get the userId
+      if (!userId) {
+        this.errorMessage = 'You must be logged in to add a library.';
+        return;
+      }
+  
+      this.http.post(`/user/${userId}`, this.newLibrary).subscribe({
+        next: (response) => {
+          console.log('Library added successfully:', response);
+          this.closeLibraryModal();
+        },
+        error: (err) => {
+          console.error('Error adding library:', err);
+          this.errorMessage = 'Failed to add library. Please try again later.';
+        }
+      });
+    }
+
+
   playMedia(id: number): void {
     this.mediaService.playMedia(id).subscribe({
       next: (media: Media) => {

@@ -1,6 +1,8 @@
 <div class="media-player-container">
+  <!-- Error message display -->
   <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
 
+  <!-- Now Playing Section -->
   <div class="now-playing">
     <h2>{{ currentlyPlayingFileName || 'No media is playing' }}</h2>
   </div>
@@ -38,4 +40,25 @@
       Upload Media
     </label>
   </div>
+
+  <!-- Add Library Button -->
+  <div class="library-section">
+    <button (click)="openLibraryModal()" class="add-library-button">Add Library</button>
+  </div>
+
+  <!-- Add Library Modal -->
+  <div *ngIf="isLibraryModalOpen" class="library-modal">
+    <h2>Add a New Library</h2>
+    <form (ngSubmit)="submitLibrary()">
+      <div>
+        <label for="libraryName">Library Name:</label>
+        <input id="libraryName" [(ngModel)]="newLibrary.name" name="libraryName" required />
+      </div>
+      <div class="modal-buttons">
+        <button type="submit">Add Library</button>
+        <button type="button" (click)="closeLibraryModal()">Cancel</button>
+      </div>
+    </form>
+  </div>
 </div>
+
