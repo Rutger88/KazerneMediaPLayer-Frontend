@@ -8,4 +8,5 @@ export interface Media {
   description?: string; // Optional description of the media
   thumbnail?: string;   // Optional URL to a thumbnail image
   type?: string;     // Optional media type (e.g., audio, video, image)
+  lib?: number;
 }

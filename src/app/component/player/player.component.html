@@ -2,6 +2,11 @@
   <div *ngIf="errorMessage" class="error-message">
     {{ errorMessage }}
   </div>
+  <div>
+    <h2>Now Playing: {{ currentlyPlayingFileName || 'No media is playing' }}</h2>
+  </div>
+  <!-- Independent Visualizer -->
+ <!--  <app-visualizer [audioElement]="audioElement.nativeElement" *ngIf="isAudio"></app-visualizer>-->
 
   <div class="media-content">
     <audio #audioElement class="media-audio" *ngIf="isAudio" controls></audio>
@@ -9,24 +14,12 @@
   </div>
 
   <div class="media-controls">
-    <button (click)="playPrevious()" class="media-button">
-      <i class="fas fa-backward"></i> Previous
-    </button>
-
-    <button (click)="playMedia(currentId)" class="media-button">
-      <i class="fas fa-play"></i> Play
-    </button>
-
-    <button (click)="stopMedia()" class="media-button">
-      <i class="fas fa-stop"></i> Stop
-    </button>
-
-    <button (click)="playNext()" class="media-button">
-      <i class="fas fa-forward"></i> Next
-    </button>
+    <button (click)="playPrevious()">Previous</button>
+    <button (click)="playMedia(currentId)">Play</button>
+    <button (click)="stopMedia()">Stop</button>
+    <button (click)="playNext()">Next</button>
   </div>
 
-  <!-- Upload section -->
   <div *ngIf="isLoggedIn" class="upload-section">
     <label for="file-upload" class="custom-file-upload">
       <i class="fa fa-cloud-upload"></i> Upload Music
@@ -34,6 +27,5 @@
     <input id="file-upload" type="file" (change)="onFileSelected($event)" />
   </div>
 
-  <!-- Error message display -->
   <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
 </div>

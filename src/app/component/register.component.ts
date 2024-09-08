@@ -26,16 +26,27 @@ export class RegistrationComponent {
   }
 
   register() {
+    if (this.username === '' || this.password === '' || this.email === '') {
+      this.errorMessage = 'All fields are required';
+      return;
+    }
+  
     this.http.post('http://localhost:8080/user/register', {
       username: this.username,
       password: this.password,
       email: this.email
     }).subscribe({
       next: () => {
-        this.close();  // Close the modal on successful registration
-        this.router.navigate(['/login']);
+        this.close();  // Sluit de modal na succesvolle registratie
+        this.router.navigate(['/login']);  // Verwijst naar loginpagina
       },
-      error: () => this.errorMessage = 'Registration failed'
+      error: (err) => {
+        if (err.status === 400) {
+          this.errorMessage = 'Invalid registration data';
+        } else {
+          this.errorMessage = 'Registration failed';
+        }
+      }
     });
   }
 }

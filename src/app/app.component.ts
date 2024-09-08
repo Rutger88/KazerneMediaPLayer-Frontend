@@ -5,6 +5,9 @@ import { MediaService } from './services/media.service';
 import { ParentComponent } from './component/player/parent.component';
 import { LoginComponent } from './component/login.component';
 import { RegistrationComponent } from './component/register.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './services/auth.interceptor';
+import { AuthService } from './services/auth.service'; 
 
 @Component({
   selector: 'app-root',
@@ -18,6 +21,12 @@ import { RegistrationComponent } from './component/register.component';
   ],
   providers: [
     MediaService,
+    AuthService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,  // Important to allow multiple interceptors
+    }
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']

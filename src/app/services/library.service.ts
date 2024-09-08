@@ -3,10 +3,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
-
-
-
-
 @Injectable({ providedIn: 'root' })
 export class LibraryService {
   constructor(private http: HttpClient) {}
@@ -16,6 +12,7 @@ export class LibraryService {
   }
 
   shareLibrary(libraryId: number, targetUserId: number): Observable<void> {
+    debugger;
     return this.http.post<void>(`/api/libraries/share?libraryId=${libraryId}&targetUserId=${targetUserId}`, {});
   }
 }

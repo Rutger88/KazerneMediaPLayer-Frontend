@@ -5,12 +5,13 @@ import { AuthService } from '@services/auth.service';
 import { CommonModule } from '@angular/common';
 import { Media } from '@app/interfaces/media.interface';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { VisualizerComponent } from '@app/component/visualizer/visualizer.component'; 
 
 @Component({
   selector: 'app-player',
   templateUrl: './player.component.html',
   styleUrls: ['./player.component.scss'],
-  imports: [CommonModule],
+  imports: [CommonModule, VisualizerComponent],
   standalone: true,
 })
 export class PlayerComponent implements AfterViewInit {
@@ -22,6 +23,7 @@ export class PlayerComponent implements AfterViewInit {
   currentId: number = 1;
   errorMessage: string | undefined;
   isLoggedIn: boolean = false;
+  currentlyPlayingFileName: string | undefined;
 
   constructor(
     private mediaService: MediaService,
@@ -35,13 +37,26 @@ export class PlayerComponent implements AfterViewInit {
     if (isPlatformBrowser(this.platformId)) {
       this.isLoggedIn = !!localStorage.getItem('authToken');
       this.cdr.detectChanges();
+
+      this.fetchCurrentlyPlayingFileName();
     }
   }
-
+  fetchCurrentlyPlayingFileName(): void {
+    this.mediaService.getCurrentlyPlayingMedia().subscribe({
+      next: (mediaName: string) => {
+        this.currentlyPlayingFileName = mediaName || 'No media is currently playing';
+      },
+      error: (error) => {
+        console.error('Error fetching currently playing media:', error);
+        this.errorMessage = 'Failed to fetch currently playing media.';
+      }
+    });
+  }
   playMedia(id: number): void {
     this.mediaService.playMedia(id).subscribe({
-      next: (media) => {
+      next: (media: Media) => {
         this.currentId = media.id;  // Update the current media ID
+        this.currentlyPlayingFileName = media.name;  // Update the song title
         this.setupMediaPlayback(media);
       },
       error: (error) => {

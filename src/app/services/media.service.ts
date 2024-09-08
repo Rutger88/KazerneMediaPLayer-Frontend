@@ -10,9 +10,13 @@ import { Media } from '@app/interfaces/media.interface';
 export class MediaService {
   private baseUrl = 'http://localhost:8080/media';
   private mediaCache: Media[] = [];
+  private currentlyPlayingUrl = 'http://localhost:8080/media/currently-playing';
 
   constructor(private http: HttpClient) {}
 
+  getCurrentlyPlayingMedia(): Observable<string> {
+    return this.http.get(this.currentlyPlayingUrl, { responseType: 'text' });
+  }
   // Fetch media data, either from cache or the backend
   getMediaData(): Observable<Media[]> {
     if (this.mediaCache.length > 0) {
@@ -63,7 +67,7 @@ export class MediaService {
       );
     }
   }
-
+  
   // Upload a media file to the backend
   uploadMedia(file: File): Observable<any> {
     const libraryId = localStorage.getItem('libraryId');
