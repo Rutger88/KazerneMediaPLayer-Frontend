@@ -43,24 +43,29 @@ export class LogregComponent {
 
   // Handle login
   onLogin() {
-    if (this.username === '' || this.password === '') {
-      this.errorMessage = 'Username and password are required';
-      return;
-    }
-  
     this.authService.login(this.username, this.password).subscribe({
       next: (response) => {
+        // Log the response to ensure it's correct
+        console.log('Login response:', response);
+  
+        // Ensure tokens and other details are stored properly in localStorage
         localStorage.setItem('authToken', response.token);
         localStorage.setItem('libraryId', response.libraryId.toString());
+  
+        console.log('Auth Token stored:', localStorage.getItem('authToken'));  // Log to confirm storage
+        console.log('Library ID stored:', localStorage.getItem('libraryId'));
+  
+        // Navigate to home or the appropriate route after successful login
         this.router.navigate(['/home']);
-        this.close();
       },
       error: (err) => {
+        // Log the error to see what goes wrong during login
         console.error('Login failed:', err);
         this.handleError(err);
       }
     });
   }
+
 
   // Handle registration
   register() {

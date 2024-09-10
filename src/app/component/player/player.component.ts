@@ -142,28 +142,35 @@ export class PlayerComponent implements AfterViewInit {
     if (fileInput.files && fileInput.files.length > 0) {
       const file = fileInput.files[0];
       this.currentlyPlayingFileName = file.name;
-      const audio = this.audioElement.nativeElement;
-      audio.src = URL.createObjectURL(file);
-      audio.load();
-      audio.play();
+  
+      // Call the uploadMedia method to upload the file
+      this.uploadMedia(file);  // Trigger the upload instead of playing the file immediately
     }
   }
-
+  
   uploadMedia(file: File): void {
     const libraryId = localStorage.getItem('libraryId');
     const authToken = localStorage.getItem('authToken');
-
+  
     if (!authToken || !libraryId) {
       this.errorMessage = 'You must be logged in to upload files.';
       return;
     }
-
+  
     const headers = new HttpHeaders().set('Authorization', `Bearer ${authToken}`);
     const formData = new FormData();
     formData.append('file', file);
-
+  
+    // Perform the upload request
     this.http.post(`http://localhost:8080/media/upload?libraryId=${libraryId}`, formData, { headers }).subscribe({
-      next: () => console.log('File uploaded successfully'),
+      next: (response: any) => {
+        console.log('File uploaded successfully:', response);
+  
+        // Assuming the backend returns the media object with an ID and URL after the upload
+        if (response && response.mediaId) {
+          this.playMedia(response.mediaId);  // Play the uploaded media after successful upload
+        }
+      },
       error: (err) => {
         if (err.status === 403) {
           this.errorMessage = 'You do not have permission to upload to this library.';
@@ -176,6 +183,7 @@ export class PlayerComponent implements AfterViewInit {
       }
     });
   }
+
   fetchCurrentlyPlayingFileName(): void {
     this.mediaService.getCurrentlyPlayingMedia().subscribe({
       next: (mediaName: string) => {

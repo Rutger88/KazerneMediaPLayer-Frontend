@@ -27,7 +27,7 @@ export class AuthService {
   }
 
   // Refresh the access token
-  refreshToken(): Observable<string> {
+  refreshToken(): Observable<any> {
     const refreshToken = this.getRefreshToken();
     if (!refreshToken) {
       return throwError(() => new Error('No refresh token found.'));
@@ -71,6 +71,7 @@ export class AuthService {
 
   // Store tokens in localStorage
   private storeTokens(authToken: string, refreshToken: string, username?: string, userId?: number): void {
+    console.log('Storing auth token:', authToken);  // Add this log
     localStorage.setItem('authToken', authToken);
     localStorage.setItem('refreshToken', refreshToken);
     if (username) {

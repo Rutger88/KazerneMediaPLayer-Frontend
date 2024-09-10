@@ -1,4 +1,15 @@
-<div class="visualizer-container">
-    <canvas id="audio-visualizer"></canvas>
-  </div>
-  
+<div #container></div>
+
+<audio #audioElement controls crossorigin></audio>
+
+<label>
+  Upload audio file
+  <input type="file" accept="audio/*" (change)="onFileUpload($event)">
+</label>
+
+<button (click)="onPlayLiveStream()">Play live stream</button>
+
+<div class="info">
+  <a href="https://audiomotion.dev">audioMotion-analyzer</a> 
+  <span #version></span>
+</div>

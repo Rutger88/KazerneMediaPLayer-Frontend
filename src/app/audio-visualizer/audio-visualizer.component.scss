@@ -1,17 +1,30 @@
-.visualizer-container {
-    width: 100%;
-    height: 200px;
-    background-color: #121212;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-  
-    canvas {
-      width: 100%;
-      height: 100%;
-    }
-  }
+audio {
+  display: inline-block;
+  height: 40px;
+  width: calc(100% - 650px);
+}
+
+label, button {
+  background: #f0f0f0;
+  border: 1px solid #999;
+  border-radius: 5px;
+  display: inline-block;
+  margin: 5px 10px 0;
+  padding: 8px 40px;
+  vertical-align: top;
+}
+
+label input {
+  display: none;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+}
+
+.info {
+  display: inline-block;
+  float: right;
+  margin: 15px 20px 0;
+}
