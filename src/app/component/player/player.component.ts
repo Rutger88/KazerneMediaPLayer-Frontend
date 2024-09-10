@@ -7,6 +7,8 @@ import { Media } from '@app/interfaces/media.interface';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { AudioVisualizerComponent } from '@app/audio-visualizer/audio-visualizer.component';
+import { LibraryService } from '@app/services/library.service';
+import { Library } from 'app/interfaces/library.interface';
 
 @Component({
   selector: 'app-player',
@@ -35,6 +37,7 @@ export class PlayerComponent implements AfterViewInit {
     private authService: AuthService,
     private http: HttpClient,
     private cdr: ChangeDetectorRef,
+    private libraryService: LibraryService,
     @Inject(PLATFORM_ID) private platformId: object
   ) {}
 
@@ -205,24 +208,26 @@ export class PlayerComponent implements AfterViewInit {
       this.isLibraryModalOpen = false;
     }
   
-    submitLibrary(): void {
-      const userId = localStorage.getItem('userId');  // Replace this with the correct way to get the userId
-      if (!userId) {
-        this.errorMessage = 'You must be logged in to add a library.';
-        return;
-      }
-  
-      this.http.post(`/user/${userId}`, this.newLibrary).subscribe({
-        next: (response) => {
-          console.log('Library added successfully:', response);
-          this.closeLibraryModal();
-        },
-        error: (err) => {
-          console.error('Error adding library:', err);
-          this.errorMessage = 'Failed to add library. Please try again later.';
-        }
-      });
+ // Add library using LibraryService
+ addLibrary(): void {
+  const userId = localStorage.getItem('userId');
+  if (!userId) {
+    this.errorMessage = 'You must be logged in to add a library.';
+    return;
+  }
+
+  // Use the LibraryService to add the library
+  this.libraryService.addLibrary(+userId, this.newLibrary as Library).subscribe({
+    next: (response) => {
+      console.log('Library added successfully:', response);
+      this.closeLibraryModal();
+    },
+    error: (err) => {
+      console.error('Error adding library:', err);
+      this.errorMessage = 'Failed to add library. Please try again later.';
     }
+  });
+}
 
   private handleTokenRefresh(retryCallback: () => void): void {
     this.authService.refreshToken().subscribe({

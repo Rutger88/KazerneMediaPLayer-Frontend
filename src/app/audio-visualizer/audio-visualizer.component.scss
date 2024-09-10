@@ -4,6 +4,13 @@ audio {
   width: calc(100% - 650px);
 }
 
+canvas {
+  width: 100%; 
+  height: 100%; 
+  display: block;
+  margin: 0 auto;
+}
+
 label, button {
   background: #f0f0f0;
   border: 1px solid #999;
@@ -16,11 +23,6 @@ label, button {
 
 label input {
   display: none;
-}
-
-canvas {
-  display: block;
-  width: 100%;
 }
 
 .info {

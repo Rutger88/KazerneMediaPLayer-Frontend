@@ -61,7 +61,7 @@
   <!-- Add Library Modal -->
   <div *ngIf="isLibraryModalOpen" class="library-modal">
     <h2>Add a New Library</h2>
-    <form (ngSubmit)="submitLibrary()">
+    <form (ngSubmit)="addLibrary()">
       <div>
         <label for="libraryName">Library Name:</label>
         <input id="libraryName" [(ngModel)]="newLibrary.name" name="libraryName" required />

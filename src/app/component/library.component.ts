@@ -9,12 +9,27 @@ import { Observable } from 'rxjs';
   styleUrls: ['./library.component.scss']
 })
 export class LibraryComponent implements OnInit {
+  isLibraryModalOpen = false;  // Modal state
+  newLibrary: Partial<Library> = {};  // Object to hold the new library data
+
   otherLibraries: Library[] = [];
   errorMessage: string | undefined;
   currentUserId: string | null = localStorage.getItem('userId');
 
   constructor(private libraryService: LibraryService) {}
 
+    // Open the modal
+    openLibraryModal(): void {
+      this.isLibraryModalOpen = true;
+    }
+  
+    // Close the modal
+    closeLibraryModal(): void {
+      this.isLibraryModalOpen = false;
+      this.newLibrary = {};  // Reset the form
+    }
+
+    
   ngOnInit(): void {
     this.loadOtherUsersLibraries();
   }
@@ -31,6 +46,26 @@ export class LibraryComponent implements OnInit {
           this.errorMessage = 'Could not load other users\' libraries.';
         }
       });
+    }
+  }
+
+  // Add a new library for the current user
+  addLibrary(): void {
+    if (this.currentUserId) {
+      this.libraryService.addLibrary(+this.currentUserId, this.newLibrary as Library).subscribe({
+        next: (response) => {
+          console.log('Library added successfully:', response);
+          alert('Library added successfully.');
+          this.closeLibraryModal();
+        },
+        error: (err) => {
+          console.error('Error adding library:', err);
+          this.errorMessage = 'Could not add the library.';
+        }
+      });
+    } else {
+      console.error('No user ID found in localStorage.');
+      this.errorMessage = 'User is not logged in.';
     }
   }
 
