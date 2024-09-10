@@ -2,73 +2,86 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #1e1e1e;
+  background: linear-gradient(135deg, #2c3e50, #1c1c1c);
   color: #fff;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  max-width: 700px;
-  margin: auto;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  max-width: 1000px;  /* Allow for a wider container */
+  margin: 50px auto;
+  width: 100%;  /* Make the container responsive */
 }
 
 .now-playing h2 {
-  font-size: 1.5rem;
-  color: #f9f9f9;
-  margin-bottom: 20px;
+  font-size: 2rem;
+  color: #eaeaea;
+  margin-bottom: 25px;
+  text-align: center;
+  letter-spacing: 1px;
 }
 
+
 .media-content {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  width: 100%;
+  text-align: center;  /* Center all media elements */
 }
+
 
 .media-audio {
   width: 100%;
-  max-width: 100%;
+  max-width: 600px;  /* Limit width for better alignment */
   border: none;
+  outline: none;
+  background-color: transparent;
+  margin: 0 auto;
 }
 
 .media-controls {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  max-width: 600px;
-  margin-bottom: 20px;
+  max-width: 650px;
+  margin-bottom: 25px;
 }
 
 .media-button {
-  background-color: #007bff;
+  background: linear-gradient(135deg, #007bff, #0062cc);
   color: #fff;
   border: none;
-  padding: 10px 15px;
-  border-radius: 6px;
+  padding: 12px 18px;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 16px;
   display: flex;
   align-items: center;
-  transition: background-color 0.3s ease;
+  transition: background 0.3s ease, transform 0.3s ease;
 }
 
 .media-button i {
   margin-right: 8px;
+  font-size: 18px;
 }
 
 .media-button:hover {
-  background-color: #0056b3;
+  background: linear-gradient(135deg, #0056b3, #004499);
+  transform: translateY(-2px);
 }
 
 .media-progress {
   width: 100%;
-  height: 8px;
-  background-color: #555;
-  border-radius: 4px;
+  height: 6px;
+  background-color: #3d3d3d;
+  border-radius: 6px;
   overflow: hidden;
+  margin-top: 20px;
 }
 
 .progress-bar {
   height: 100%;
-  background-color: #4caf50;
+  background: linear-gradient(135deg, #4caf50, #3e8e41);
   width: 0;
-  border-radius: 4px;
+  border-radius: 6px;
   transition: width 0.4s ease;
 }
 
@@ -78,17 +91,19 @@
 
 .custom-file-upload {
   display: inline-block;
-  padding: 10px 20px;
+  padding: 12px 25px;
   cursor: pointer;
   background-color: #007bff;
   color: white;
-  border-radius: 6px;
-  font-size: 14px;
-  transition: background-color 0.3s ease;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .custom-file-upload:hover {
   background-color: #0056b3;
+  transform: translateY(-2px);
 }
 
 #file-upload {
@@ -96,56 +111,91 @@
 }
 
 .error-message {
-  color: #ff4d4d;
-  margin-bottom: 10px;
+  color: #ff6b6b;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-align: center;
 }
+
 .library-modal {
   position: fixed;
-  top: 20%;
+  top: 50%;
   left: 50%;
-  transform: translate(-50%, -20%);
+  transform: translate(-50%, -50%);
   background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   z-index: 1000;
+  width: 90%;
+  max-width: 400px;
+  animation: fadeIn 0.3s ease;
 }
 
 .library-section {
-  margin-top: 20px;
+  margin-top: 30px;
+  text-align: center;
 }
 
 .add-library-button {
   background-color: #007bff;
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
+  padding: 12px 25px;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .add-library-button:hover {
   background-color: #0056b3;
+  transform: translateY(-2px);
 }
 
 .modal-buttons {
   display: flex;
   justify-content: space-between;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 .modal-buttons button {
-  padding: 5px 10px;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  border: none;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.media-progress {
-  height: 4px;
-  background-color: #ddd;
-  margin-top: 10px;
+.modal-buttons button:hover {
+  transform: translateY(-2px);
 }
 
-.progress-bar {
-  height: 100%;
-  background-color: #007bff;
-  transition: width 0.3s ease;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.visualizer-container {
+  margin-top: 20px;
+  width: 100%;  /* Allow the container to take full width */
+  max-width: 900px;  /* Increase the maximum width to make it wider */
+  display: flex;  /* Flexbox to center contents */
+  justify-content: center;  /* Horizontally center the canvas */
+}
+
+canvas {
+  display: block;
+  width: 100%; 
+  max-width: 900px;  /* Increase the maximum width for a wider visualizer */
+  height: 200px;  /* Adjust the height as needed */
+  background-color: #1e1e1e;
+  border-radius: 10px;
 }
