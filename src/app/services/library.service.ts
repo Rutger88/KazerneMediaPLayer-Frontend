@@ -17,6 +17,12 @@ export class LibraryService {
     return this.http.post<Library>(url, library);
   }
 
+    // Method to delete a library by its ID
+    deleteLibrary(libraryId: number): Observable<void> {
+      const url = `${this.baseUrl}/delete/${libraryId}`;
+      return this.http.delete<void>(url);
+    }
+  
   getOtherUsersLibraries(currentUserId: string): Observable<Library[]> {
     const url = `${this.baseUrl}/others/${currentUserId}`;
     return this.http.get<Library[]>(url);

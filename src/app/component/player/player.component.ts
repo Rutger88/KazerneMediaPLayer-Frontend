@@ -44,6 +44,7 @@ export class PlayerComponent implements AfterViewInit {
   ngOnInit(): void {
     if (this.audioElement) {
       this.audioElement.nativeElement.addEventListener('timeupdate', this.updateProgress.bind(this));
+      
     }
   }
 

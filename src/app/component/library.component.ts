@@ -85,4 +85,20 @@ export class LibraryComponent implements OnInit {
       });
     }
   }
+
+deleteLibrary(libraryId: number): void {
+  if (confirm('Are you sure you want to delete this library?')) {
+    this.libraryService.deleteLibrary(libraryId).subscribe({
+      next: () => {
+        console.log(`Library with ID ${libraryId} deleted successfully.`);
+        // Optionally, you can reload the list of libraries after deletion
+        this.loadOtherUsersLibraries();
+      },
+      error: (err) => {
+        console.error('Error deleting library:', err);
+        this.errorMessage = 'Failed to delete the library. Please try again later.';
+      }
+    });
+  }
+}
 }
