@@ -7,6 +7,12 @@
     <h2>{{ currentlyPlayingFileName || 'No media is playing' }}</h2>
   </div>
 
+  <!-- Video Player: only visible when a video is selected -->
+  <video *ngIf="!isAudio && currentMediaUrl" #videoElement class="media-video" controls>
+    <source [src]="currentMediaUrl" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+
   <!-- Media Content with the unified audio player -->
   <div class="media-content">
     <audio id="audio-player" #audioElement class="media-audio" controls>
